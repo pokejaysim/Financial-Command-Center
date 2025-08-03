@@ -710,6 +710,164 @@
             font-style: italic;
         }
 
+        /* Calendar Styles */
+        .calendar-container {
+            margin-top: 2rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--radius) / 2);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .calendar-nav:hover {
+            background-color: var(--border-color);
+        }
+
+        .calendar-month-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .calendar-grid {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: var(--background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calendar-weekday {
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .calendar-weekday:last-child {
+            border-right: none;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            background: var(--card-background);
+            min-height: 100px;
+            padding: 0.5rem;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day.other-month {
+            background-color: var(--background);
+            opacity: 0.5;
+        }
+
+        .calendar-day.today {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .day-payments {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .payment-item {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.125rem 0.25rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .payment-item.weekly {
+            background-color: var(--success-color);
+        }
+
+        .payment-item.biweekly {
+            background-color: var(--warning-color);
+        }
+
+        .payment-item.annual {
+            background-color: var(--danger-color);
+        }
+
+        .coast-capital-total {
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .coast-capital-total h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .coast-capital-total .total-amount {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-day {
+                min-height: 80px;
+                padding: 0.25rem;
+            }
+            
+            .payment-item {
+                font-size: 0.65rem;
+            }
+            
+            .day-number {
+                font-size: 0.8rem;
+            }
+        }
+
         /* Toggle Switch */
         .toggle-switch {
             position: relative;
@@ -962,11 +1120,41 @@
                     </button>
                 </div>
 
+                <!-- Coast Capital Total -->
+                <div class="coast-capital-total">
+                    <h3>Monthly Total</h3>
+                    <div class="total-amount" id="coastCapitalTotal">$0.00</div>
+                </div>
+
                 <div class="card">
                     <div id="expensesList" class="empty-state">
                         <div class="empty-state-icon">🏠</div>
                         <div class="empty-state-text">No Coast Capital expenses added yet</div>
                         <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
+                    </div>
+                </div>
+
+                <!-- Payment Calendar -->
+                <div class="card calendar-container">
+                    <h3>Payment Calendar</h3>
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="changeCalendarMonth(-1)">←</button>
+                        <h4 class="calendar-month-title" id="calendarMonthTitle">August 2025</h4>
+                        <button class="calendar-nav" onclick="changeCalendarMonth(1)">→</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-weekdays">
+                            <div class="calendar-weekday">Sun</div>
+                            <div class="calendar-weekday">Mon</div>
+                            <div class="calendar-weekday">Tue</div>
+                            <div class="calendar-weekday">Wed</div>
+                            <div class="calendar-weekday">Thu</div>
+                            <div class="calendar-weekday">Fri</div>
+                            <div class="calendar-weekday">Sat</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays">
+                            <!-- Calendar days will be generated here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1535,6 +1723,10 @@
         const financialData = new FinancialData();
         financialData.load();
 
+        // Calendar state
+        let calendarCurrentMonth = new Date().getMonth();
+        let calendarCurrentYear = new Date().getFullYear();
+
         // UI Helper Functions
         function $(id) {
             return document.getElementById(id);
@@ -1633,6 +1825,204 @@
             }
             
             return nextDate;
+        }
+
+        // Calendar Functions
+        function calculatePaymentOccurrences(expense, year, month) {
+            if (!expense.isActive || !expense.startDate) return [];
+            
+            const startDate = new Date(expense.startDate);
+            const occurrences = [];
+            
+            switch (expense.frequency) {
+                case 'weekly':
+                    return getWeeklyOccurrences(startDate, year, month);
+                case 'biweekly':
+                    return getBiweeklyOccurrences(startDate, year, month);
+                case 'monthly':
+                    return getMonthlyOccurrences(expense, year, month);
+                case 'annual':
+                    return getAnnualOccurrences(startDate, year, month);
+                default:
+                    return [];
+            }
+        }
+
+        function getWeeklyOccurrences(startDate, year, month) {
+            const occurrences = [];
+            const targetDayOfWeek = startDate.getDay();
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0);
+            
+            // Find first occurrence of the weekday in the month
+            let current = new Date(monthStart);
+            while (current.getDay() !== targetDayOfWeek) {
+                current.setDate(current.getDate() + 1);
+            }
+            
+            // Add all weekly occurrences in the month
+            while (current <= monthEnd) {
+                if (current >= startDate) {
+                    occurrences.push(new Date(current));
+                }
+                current.setDate(current.getDate() + 7);
+            }
+            
+            return occurrences;
+        }
+
+        function getBiweeklyOccurrences(startDate, year, month) {
+            const occurrences = [];
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0);
+            
+            // Calculate all biweekly occurrences from start date
+            let current = new Date(startDate);
+            
+            // Go backwards to find occurrences before the target month
+            while (current > monthStart) {
+                current.setDate(current.getDate() - 14);
+            }
+            
+            // Go forward to find occurrences in the target month
+            while (current <= monthEnd) {
+                if (current >= monthStart && current >= startDate) {
+                    occurrences.push(new Date(current));
+                }
+                current.setDate(current.getDate() + 14);
+            }
+            
+            return occurrences;
+        }
+
+        function getMonthlyOccurrences(expense, year, month) {
+            const startDate = new Date(expense.startDate);
+            const paymentDay = expense.paymentDay || startDate.getDate();
+            
+            // Only include if the expense has started by this month
+            if (year < startDate.getFullYear() || (year === startDate.getFullYear() && month < startDate.getMonth())) {
+                return [];
+            }
+            
+            let paymentDate = new Date(year, month, paymentDay);
+            
+            // Handle months with fewer days (e.g., Feb 30th becomes Feb 28th)
+            if (paymentDate.getMonth() !== month) {
+                paymentDate = new Date(year, month + 1, 0); // Last day of the month
+            }
+            
+            return [paymentDate];
+        }
+
+        function getAnnualOccurrences(startDate, year, month) {
+            // Only show if it's the anniversary month and year >= start year
+            if (startDate.getMonth() === month && year >= startDate.getFullYear()) {
+                const anniversaryDate = new Date(year, month, startDate.getDate());
+                return [anniversaryDate];
+            }
+            return [];
+        }
+
+        function generateCalendarForMonth(year, month) {
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0);
+            const firstDayOfWeek = monthStart.getDay();
+            const daysInMonth = monthEnd.getDate();
+            
+            // Get all payment occurrences for this month
+            const paymentsByDate = {};
+            
+            financialData.expenses.forEach(expense => {
+                const occurrences = calculatePaymentOccurrences(expense, year, month);
+                occurrences.forEach(date => {
+                    const dateKey = date.getDate();
+                    if (!paymentsByDate[dateKey]) {
+                        paymentsByDate[dateKey] = [];
+                    }
+                    paymentsByDate[dateKey].push({
+                        name: expense.name,
+                        amount: expense.amount,
+                        frequency: expense.frequency
+                    });
+                });
+            });
+            
+            return {
+                year,
+                month,
+                firstDayOfWeek,
+                daysInMonth,
+                paymentsByDate
+            };
+        }
+
+        function renderCalendar() {
+            const calendarData = generateCalendarForMonth(calendarCurrentYear, calendarCurrentMonth);
+            const calendarDays = $('calendarDays');
+            const today = new Date();
+            
+            // Update month title
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            $('calendarMonthTitle').textContent = `${monthNames[calendarCurrentMonth]} ${calendarCurrentYear}`;
+            
+            let html = '';
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < calendarData.firstDayOfWeek; i++) {
+                const prevMonth = calendarCurrentMonth === 0 ? 11 : calendarCurrentMonth - 1;
+                const prevYear = calendarCurrentMonth === 0 ? calendarCurrentYear - 1 : calendarCurrentYear;
+                const prevMonthDays = new Date(prevYear, prevMonth + 1, 0).getDate();
+                const dayNum = prevMonthDays - calendarData.firstDayOfWeek + i + 1;
+                
+                html += `<div class="calendar-day other-month"><div class="day-number">${dayNum}</div></div>`;
+            }
+            
+            // Add days of the current month
+            for (let day = 1; day <= calendarData.daysInMonth; day++) {
+                const isToday = today.getFullYear() === calendarCurrentYear && 
+                               today.getMonth() === calendarCurrentMonth && 
+                               today.getDate() === day;
+                
+                const payments = calendarData.paymentsByDate[day] || [];
+                const paymentsHtml = payments.map(payment => 
+                    `<div class="payment-item ${payment.frequency}" title="${payment.name}: ${formatCurrency(payment.amount)}">
+                        <div>${payment.name}</div>
+                        <div>${formatCurrency(payment.amount)}</div>
+                    </div>`
+                ).join('');
+                
+                html += `
+                    <div class="calendar-day ${isToday ? 'today' : ''}">
+                        <div class="day-number">${day}</div>
+                        <div class="day-payments">${paymentsHtml}</div>
+                    </div>
+                `;
+            }
+            
+            // Fill remaining cells if needed
+            const totalCells = Math.ceil((calendarData.firstDayOfWeek + calendarData.daysInMonth) / 7) * 7;
+            const remainingCells = totalCells - (calendarData.firstDayOfWeek + calendarData.daysInMonth);
+            
+            for (let day = 1; day <= remainingCells; day++) {
+                html += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
+            }
+            
+            calendarDays.innerHTML = html;
+        }
+
+        function changeCalendarMonth(direction) {
+            calendarCurrentMonth += direction;
+            
+            if (calendarCurrentMonth < 0) {
+                calendarCurrentMonth = 11;
+                calendarCurrentYear--;
+            } else if (calendarCurrentMonth > 11) {
+                calendarCurrentMonth = 0;
+                calendarCurrentYear++;
+            }
+            
+            renderCalendar();
         }
 
         // Theme Management
@@ -2012,6 +2402,12 @@
         function renderExpensesList() {
             const container = $('expensesList');
             
+            // Update Coast Capital total
+            const coastCapitalTotal = financialData.expenses
+                .filter(expense => expense.isActive)
+                .reduce((total, expense) => total + financialData.calculateMonthlyAmount(expense), 0);
+            $('coastCapitalTotal').textContent = formatCurrency(coastCapitalTotal);
+            
             if (financialData.expenses.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -2020,6 +2416,7 @@
                         <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
                     </div>
                 `;
+                renderCalendar();
                 return;
             }
             
@@ -2053,6 +2450,7 @@
             }).join('');
             
             container.innerHTML = expensesHtml;
+            renderCalendar();
         }
 
         function editExpense(id) {
@@ -2424,6 +2822,7 @@
             initNavigation();
             initMonthNavigation();
             updateDashboard();
+            renderCalendar();
             
             // Theme toggle
             $('themeToggle').addEventListener('click', toggleTheme);
