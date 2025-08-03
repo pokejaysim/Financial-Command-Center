@@ -1209,6 +1209,97 @@
             margin-bottom: 1rem;
         }
 
+        /* Notes Section Styles */
+        .add-note-card {
+            margin-bottom: 1.5rem;
+        }
+
+        .note-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            transition: all 0.2s;
+        }
+
+        .note-item:last-child {
+            border-bottom: none;
+        }
+
+        .note-item:hover {
+            background-color: var(--background);
+            margin: 0 -1rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-timestamp {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .note-item:hover .note-actions {
+            opacity: 1;
+        }
+
+        .note-action-btn {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .note-action-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .note-action-btn.edit:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .note-action-btn.delete:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .note-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .notes-empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .notes-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .notes-empty-text {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .neo-controls {
@@ -1230,6 +1321,11 @@
             
             .neo-metric-value {
                 font-size: 1.5rem;
+            }
+            
+            .note-item:hover {
+                margin: 0;
+                padding: 1rem 0;
             }
         }
 
@@ -1353,7 +1449,7 @@
             <button class="nav-tab" data-tab="budgetBuddy">Budget Buddy</button>
             <button class="nav-tab" data-tab="expenses">Coast Capital Account</button>
             <button class="nav-tab" data-tab="subscriptions">Neo Credit Card</button>
-            <button class="nav-tab" data-tab="variables">Monthly Variables</button>
+            <button class="nav-tab" data-tab="notes">Notes</button>
             <button class="nav-tab" data-tab="analytics">Analytics</button>
             <button class="nav-tab" data-tab="settings">Settings</button>
         </nav>
@@ -1621,29 +1717,38 @@
                 </div>
             </div>
 
-            <!-- Monthly Variables Tab -->
-            <div id="variables" class="tab-content">
+            <!-- Notes Tab -->
+            <div id="notes" class="tab-content">
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">Monthly Variables</h2>
-                        <p class="section-subtitle">Other variable expenses</p>
+                        <h2 class="section-title">Notes & Reminders</h2>
+                        <p class="section-subtitle">Keep track of important financial information</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddVariableModal()">
-                        <span>+</span>
-                        <span>Update This Month</span>
-                    </button>
                 </div>
 
+                <!-- Add Note Form -->
+                <div class="card add-note-card">
+                    <h3>Add New Note</h3>
+                    <form id="addNoteForm" onsubmit="saveNote(event)">
+                        <div class="form-group">
+                            <textarea 
+                                name="noteContent" 
+                                placeholder="Enter your note or reminder..." 
+                                rows="3" 
+                                required>
+                            </textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾</span>
+                            <span>Save Note</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Notes List -->
                 <div class="card">
-                    <h3>Other Variable Expenses</h3>
-                    <div class="metric-value amount negative" id="monthlyOtherExpenses">$0.00</div>
-                </div>
-
-                <div class="card mt-3">
-                    <h3>Monthly History</h3>
-                    <div id="variablesHistory" class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <div class="empty-state-text">No monthly data recorded yet</div>
+                    <div id="notesList">
+                        <!-- Notes rendered by JavaScript -->
                     </div>
                 </div>
             </div>
@@ -1902,29 +2007,6 @@
         </div>
     </div>
 
-    <!-- Add Variable Modal -->
-    <div id="addVariableModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Update Monthly Variables</h2>
-                <button class="close-btn" onclick="closeModal('addVariableModal')">×</button>
-            </div>
-            <form id="addVariableForm" onsubmit="saveVariable(event)">
-                <div class="form-group">
-                    <label>Other Variable Expenses</label>
-                    <input type="number" name="otherExpenses" required step="0.01" min="0" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Notes (Optional)</label>
-                    <textarea name="notes" rows="3" placeholder="Any notes about this month's expenses"></textarea>
-                </div>
-                <div class="flex gap-2">
-                    <button type="submit" class="btn btn-primary">Save Variables</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('addVariableModal')">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Chart.js Library (Minimal Implementation) -->
     <script>
@@ -2077,7 +2159,8 @@
                 this.budgetBuddy = [];
                 this.expenses = [];
                 this.subscriptions = [];
-                this.monthlyVariables = {};
+                this.monthlyVariables = {}; // Keep for backwards compatibility
+                this.notes = []; // New notes array
                 this.settings = {
                     savingsGoal: 700,
                     theme: 'light'
@@ -2108,6 +2191,10 @@
                     // Ensure budgetBuddy array exists for backwards compatibility
                     if (!this.budgetBuddy) {
                         this.budgetBuddy = [];
+                    }
+                    // Ensure notes array exists for backwards compatibility
+                    if (!this.notes) {
+                        this.notes = [];
                     }
                     // Remove old budgetBuddyLimit from settings
                     if (this.settings && this.settings.budgetBuddyLimit !== undefined) {
@@ -2549,8 +2636,8 @@
                     case 'subscriptions':
                         renderSubscriptionsList();
                         break;
-                    case 'variables':
-                        renderVariablesTab();
+                    case 'notes':
+                        renderNotesList();
                         break;
                     case 'analytics':
                         updateAnalytics();
@@ -3257,82 +3344,109 @@
             return groups;
         }
 
-        // Monthly Variables Management
-        function openAddVariableModal() {
-            const currentData = financialData.monthlyVariables[financialData.currentMonth] || { otherExpenses: 0, notes: '' };
-            
-            const form = $('addVariableForm');
-            form.otherExpenses.value = currentData.otherExpenses;
-            form.notes.value = currentData.notes || '';
-            
-            openModal('addVariableModal');
-        }
-
-        function saveVariable(event) {
+        // Notes Management
+        function saveNote(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             
-            financialData.monthlyVariables[financialData.currentMonth] = {
-                month: financialData.currentMonth,
-                otherExpenses: parseFloat(formData.get('otherExpenses')),
-                notes: formData.get('notes')
+            const noteContent = formData.get('noteContent').trim();
+            if (!noteContent) return;
+            
+            const note = {
+                id: 'note_' + Date.now(),
+                content: noteContent,
+                timestamp: new Date().toISOString(),
+                createdAt: new Date().toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }),
+                isActive: true
             };
             
+            financialData.notes.unshift(note); // Add to beginning for newest first
             financialData.save();
-            closeModal('addVariableModal');
-            renderVariablesTab();
-            updateDashboard();
+            form.reset();
+            renderNotesList();
         }
 
-        function renderVariablesTab() {
-            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { otherExpenses: 0 };
+        function renderNotesList() {
+            const container = $('notesList');
+            const activeNotes = financialData.notes.filter(note => note.isActive);
             
-            $('monthlyOtherExpenses').textContent = formatCurrency(monthData.otherExpenses);
-            
-            // Render history
-            const historyContainer = $('variablesHistory');
-            const history = Object.entries(financialData.monthlyVariables)
-                .sort((a, b) => b[0].localeCompare(a[0]))
-                .slice(0, 12);
-            
-            if (history.length === 0) {
-                historyContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <div class="empty-state-text">No monthly data recorded yet</div>
+            if (activeNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="notes-empty-state">
+                        <div class="notes-empty-icon">📝</div>
+                        <div class="notes-empty-text">No notes yet</div>
+                        <p>Add your first note above to get started</p>
                     </div>
                 `;
                 return;
             }
             
-            const historyHtml = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Month</th>
-                            <th>Other Expenses</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${history.map(([month, data]) => {
-                            const [year, monthNum] = month.split('-');
-                            const date = new Date(year, monthNum - 1);
-                            const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                            const total = data.otherExpenses || 0;
-                            
-                            return `
-                                <tr>
-                                    <td>${monthName}</td>
-                                    <td class="amount negative">${formatCurrency(total)}</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            `;
+            // Sort by timestamp (newest first)
+            const sortedNotes = activeNotes.sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
             
-            historyContainer.innerHTML = historyHtml;
+            const notesHtml = sortedNotes.map(note => `
+                <div class="note-item" data-note-id="${note.id}">
+                    <div class="note-header">
+                        <div class="note-timestamp">${note.createdAt}</div>
+                        <div class="note-actions">
+                            <button class="note-action-btn edit" onclick="editNote('${note.id}')" title="Edit">
+                                <span>✏️</span>
+                            </button>
+                            <button class="note-action-btn delete" onclick="deleteNote('${note.id}')" title="Delete">
+                                <span>🗑️</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="note-content">${escapeHtml(note.content)}</div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = notesHtml;
+        }
+
+        function editNote(id) {
+            const note = financialData.notes.find(n => n.id === id);
+            if (!note) return;
+            
+            const newContent = prompt('Edit note:', note.content);
+            if (newContent !== null && newContent.trim() !== '') {
+                note.content = newContent.trim();
+                note.timestamp = new Date().toISOString(); // Update timestamp
+                note.createdAt = new Date().toLocaleString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: 'numeric', minute: '2-digit', hour12: true
+                }) + ' (edited)';
+                
+                financialData.save();
+                renderNotesList();
+            }
+        }
+
+        function deleteNote(id) {
+            if (!confirm('Are you sure you want to delete this note?')) return;
+            
+            const noteIndex = financialData.notes.findIndex(n => n.id === id);
+            if (noteIndex !== -1) {
+                financialData.notes[noteIndex].isActive = false; // Soft delete
+                financialData.save();
+                renderNotesList();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Analytics
