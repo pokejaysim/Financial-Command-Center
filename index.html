@@ -544,34 +544,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Budget Buddy Special Styling */
-        .budget-buddy-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .budget-buddy-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            transform: rotate(45deg);
-        }
-
-        .budget-buddy-limit {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-        }
 
         /* Action Buttons */
         .action-buttons {
@@ -833,8 +805,9 @@
         <nav class="nav-tabs">
             <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
             <button class="nav-tab" data-tab="income">Income</button>
-            <button class="nav-tab" data-tab="expenses">Fixed Expenses</button>
-            <button class="nav-tab" data-tab="subscriptions">Subscriptions</button>
+            <button class="nav-tab" data-tab="budgetBuddy">Budget Buddy</button>
+            <button class="nav-tab" data-tab="expenses">Coast Capital Account</button>
+            <button class="nav-tab" data-tab="subscriptions">Neo Credit Card</button>
             <button class="nav-tab" data-tab="variables">Monthly Variables</button>
             <button class="nav-tab" data-tab="analytics">Analytics</button>
             <button class="nav-tab" data-tab="settings">Settings</button>
@@ -910,26 +883,39 @@
                         </div>
                         <div class="quick-stat">
                             <div class="quick-stat-value" id="totalExpenseItems">0</div>
-                            <div class="quick-stat-label">Fixed Expenses</div>
+                            <div class="quick-stat-label">Coast Capital</div>
                         </div>
                         <div class="quick-stat">
                             <div class="quick-stat-value" id="totalSubscriptions">0</div>
-                            <div class="quick-stat-label">Subscriptions</div>
+                            <div class="quick-stat-label">Neo Credit Card</div>
                         </div>
                         <div class="quick-stat">
-                            <div class="quick-stat-value amount" id="budgetBuddyAmount">$0</div>
-                            <div class="quick-stat-label">Budget Buddy</div>
+                            <div class="quick-stat-value" id="totalBudgetBuddyItems">0</div>
+                            <div class="quick-stat-label">Budget Buddy Items</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Budget Buddy Card -->
-                <div class="card budget-buddy-card mt-3">
-                    <div class="budget-buddy-limit">Limit: $750</div>
-                    <h3 style="color: white; margin-bottom: 1rem;">Budget Buddy Status</h3>
-                    <div class="metric-value" style="color: white;" id="budgetBuddyStatus">$0 / $750</div>
-                    <div class="progress-container" style="background-color: rgba(255,255,255,0.2); margin-top: 1rem;">
-                        <div class="progress-bar" id="budgetBuddyProgress" style="background-color: white; width: 0%;"></div>
+            </div>
+
+            <!-- Budget Buddy Tab -->
+            <div id="budgetBuddy" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Budget Buddy</h2>
+                        <p class="section-subtitle">Discretionary spending budget</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddBudgetBuddyModal()">
+                        <span>+</span>
+                        <span>Add Budget Item</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div id="budgetBuddyList" class="empty-state">
+                        <div class="empty-state-icon">💰</div>
+                        <div class="empty-state-text">No budget items added yet</div>
+                        <button class="btn btn-primary" onclick="openAddBudgetBuddyModal()">Add Your First Budget Item</button>
                     </div>
                 </div>
             </div>
@@ -960,8 +946,8 @@
             <div id="expenses" class="tab-content">
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">Fixed Recurring Expenses</h2>
-                        <p class="section-subtitle">Mortgage, utilities, insurance, etc.</p>
+                        <h2 class="section-title">Coast Capital Account</h2>
+                        <p class="section-subtitle">Expenses from your Coast Capital account</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddExpenseModal()">
                         <span>+</span>
@@ -972,7 +958,7 @@
                 <div class="card">
                     <div id="expensesList" class="empty-state">
                         <div class="empty-state-icon">🏠</div>
-                        <div class="empty-state-text">No fixed expenses added yet</div>
+                        <div class="empty-state-text">No Coast Capital expenses added yet</div>
                         <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
                     </div>
                 </div>
@@ -982,8 +968,8 @@
             <div id="subscriptions" class="tab-content">
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">Subscriptions</h2>
-                        <p class="section-subtitle">Netflix, Spotify, software subscriptions, etc.</p>
+                        <h2 class="section-title">Neo Credit Card</h2>
+                        <p class="section-subtitle">Expenses from your Neo credit card</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddSubscriptionModal()">
                         <span>+</span>
@@ -993,9 +979,9 @@
 
                 <div class="card">
                     <div id="subscriptionsList" class="empty-state">
-                        <div class="empty-state-icon">📺</div>
-                        <div class="empty-state-text">No subscriptions added yet</div>
-                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Subscription</button>
+                        <div class="empty-state-icon">💳</div>
+                        <div class="empty-state-text">No Neo Credit Card expenses added yet</div>
+                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Expense</button>
                     </div>
                 </div>
             </div>
@@ -1005,7 +991,7 @@
                 <div class="section-header">
                     <div>
                         <h2 class="section-title">Monthly Variables</h2>
-                        <p class="section-subtitle">Budget Buddy and other variable expenses</p>
+                        <p class="section-subtitle">Other variable expenses</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddVariableModal()">
                         <span>+</span>
@@ -1013,13 +999,7 @@
                     </button>
                 </div>
 
-                <div class="card budget-buddy-card">
-                    <h3 style="color: white;">Budget Buddy Total</h3>
-                    <div class="metric-value" style="color: white;" id="monthlyBudgetBuddy">$0.00</div>
-                    <div class="budget-buddy-limit">Monthly Limit: $750</div>
-                </div>
-
-                <div class="card mt-3">
+                <div class="card">
                     <h3>Other Variable Expenses</h3>
                     <div class="metric-value amount negative" id="monthlyOtherExpenses">$0.00</div>
                 </div>
@@ -1097,10 +1077,6 @@
                         <label>Monthly Savings Goal</label>
                         <input type="number" id="savingsGoal" value="700" step="50">
                     </div>
-                    <div class="form-group">
-                        <label>Budget Buddy Monthly Limit</label>
-                        <input type="number" id="budgetBuddyLimit" value="750" step="50">
-                    </div>
                     <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
                 </div>
 
@@ -1174,13 +1150,13 @@
     <div id="addExpenseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Add Fixed Expense</h2>
+                <h2 class="modal-title">Add Coast Capital Expense</h2>
                 <button class="close-btn" onclick="closeModal('addExpenseModal')">×</button>
             </div>
             <form id="addExpenseForm" onsubmit="saveExpense(event)">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" name="name" required placeholder="e.g., Mortgage, Car Insurance">
+                    <input type="text" name="name" required placeholder="e.g., Mortgage, Car Payment">
                 </div>
                 <div class="form-group">
                     <label>Amount</label>
@@ -1211,7 +1187,7 @@
     <div id="addSubscriptionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Add Subscription</h2>
+                <h2 class="modal-title">Add Neo Credit Card Expense</h2>
                 <button class="close-btn" onclick="closeModal('addSubscriptionModal')">×</button>
             </div>
             <form id="addSubscriptionForm" onsubmit="saveSubscription(event)">
@@ -1235,8 +1211,45 @@
                     <input type="date" name="startDate" required>
                 </div>
                 <div class="flex gap-2">
-                    <button type="submit" class="btn btn-primary">Save Subscription</button>
+                    <button type="submit" class="btn btn-primary">Save Expense</button>
                     <button type="button" class="btn btn-secondary" onclick="closeModal('addSubscriptionModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Budget Buddy Modal -->
+    <div id="addBudgetBuddyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Budget Item</h2>
+                <button class="close-btn" onclick="closeModal('addBudgetBuddyModal')">×</button>
+            </div>
+            <form id="addBudgetBuddyForm" onsubmit="saveBudgetBuddy(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required placeholder="e.g., Discretionary Spending">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" name="amount" required step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select name="frequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Bi-weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Budget Item</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addBudgetBuddyModal')">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1250,11 +1263,6 @@
                 <button class="close-btn" onclick="closeModal('addVariableModal')">×</button>
             </div>
             <form id="addVariableForm" onsubmit="saveVariable(event)">
-                <div class="form-group">
-                    <label>Budget Buddy Total</label>
-                    <input type="number" name="budgetBuddy" required step="0.01" min="0" max="750" placeholder="0.00">
-                    <small class="text-secondary">Maximum: $750</small>
-                </div>
                 <div class="form-group">
                     <label>Other Variable Expenses</label>
                     <input type="number" name="otherExpenses" required step="0.01" min="0" placeholder="0.00">
@@ -1419,15 +1427,30 @@
         class FinancialData {
             constructor() {
                 this.income = [];
+                this.budgetBuddy = [];
                 this.expenses = [];
                 this.subscriptions = [];
                 this.monthlyVariables = {};
                 this.settings = {
                     savingsGoal: 700,
-                    budgetBuddyLimit: 750,
                     theme: 'light'
                 };
                 this.currentMonth = new Date().toISOString().slice(0, 7);
+                this.initializeDefaultBudgetBuddy();
+            }
+
+            initializeDefaultBudgetBuddy() {
+                if (this.budgetBuddy.length === 0) {
+                    this.budgetBuddy.push({
+                        id: 'default-budget-buddy',
+                        name: 'Discretionary Spending',
+                        amount: 750,
+                        frequency: 'monthly',
+                        category: 'budget_buddy',
+                        startDate: new Date().toISOString().slice(0, 10),
+                        isActive: true
+                    });
+                }
             }
 
             load() {
@@ -1435,7 +1458,16 @@
                 if (saved) {
                     const data = JSON.parse(saved);
                     Object.assign(this, data);
+                    // Ensure budgetBuddy array exists for backwards compatibility
+                    if (!this.budgetBuddy) {
+                        this.budgetBuddy = [];
+                    }
+                    // Remove old budgetBuddyLimit from settings
+                    if (this.settings && this.settings.budgetBuddyLimit !== undefined) {
+                        delete this.settings.budgetBuddyLimit;
+                    }
                 }
+                this.initializeDefaultBudgetBuddy();
             }
 
             save() {
@@ -1465,6 +1497,10 @@
             }
 
             getMonthlyExpenses() {
+                const budgetBuddy = this.budgetBuddy
+                    .filter(item => item.isActive)
+                    .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
+                
                 const fixed = this.expenses
                     .filter(item => item.isActive)
                     .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
@@ -1473,9 +1509,9 @@
                     .filter(item => item.isActive)
                     .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
                 
-                const variables = this.monthlyVariables[this.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
+                const variables = this.monthlyVariables[this.currentMonth] || { otherExpenses: 0 };
                 
-                return fixed + subs + variables.budgetBuddyTotal + variables.otherExpenses;
+                return budgetBuddy + fixed + subs + variables.otherExpenses;
             }
 
             getAvailableForSavings() {
@@ -1553,6 +1589,9 @@
                         break;
                     case 'income':
                         renderIncomeList();
+                        break;
+                    case 'budgetBuddy':
+                        renderBudgetBuddyList();
                         break;
                     case 'expenses':
                         renderExpensesList();
@@ -1644,16 +1683,9 @@
             
             // Update quick stats
             $('totalIncomeItems').textContent = financialData.income.filter(i => i.isActive).length;
+            $('totalBudgetBuddyItems').textContent = financialData.budgetBuddy.filter(i => i.isActive).length;
             $('totalExpenseItems').textContent = financialData.expenses.filter(i => i.isActive).length;
             $('totalSubscriptions').textContent = financialData.subscriptions.filter(i => i.isActive).length;
-            
-            // Update Budget Buddy
-            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
-            $('budgetBuddyAmount').textContent = formatCurrency(monthData.budgetBuddyTotal);
-            $('budgetBuddyStatus').textContent = `${formatCurrency(monthData.budgetBuddyTotal)} / ${formatCurrency(financialData.settings.budgetBuddyLimit)}`;
-            
-            const buddyProgress = (monthData.budgetBuddyTotal / financialData.settings.budgetBuddyLimit) * 100;
-            $('budgetBuddyProgress').style.width = `${buddyProgress}%`;
         }
 
         // Modal Functions
@@ -1754,11 +1786,99 @@
             openModal('addIncomeModal');
         }
 
+        // Budget Buddy Management
+        function openAddBudgetBuddyModal() {
+            $('addBudgetBuddyForm').reset();
+            $('addBudgetBuddyForm').dataset.editId = '';
+            $('addBudgetBuddyModal').querySelector('.modal-title').textContent = 'Add Budget Item';
+            openModal('addBudgetBuddyModal');
+        }
+
+        function saveBudgetBuddy(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const budgetItem = {
+                id: form.dataset.editId || generateId(),
+                name: formData.get('name'),
+                amount: parseFloat(formData.get('amount')),
+                frequency: formData.get('frequency'),
+                category: 'budget_buddy',
+                startDate: formData.get('startDate'),
+                isActive: true
+            };
+            
+            if (form.dataset.editId) {
+                const index = financialData.budgetBuddy.findIndex(i => i.id === form.dataset.editId);
+                if (index !== -1) {
+                    financialData.budgetBuddy[index] = budgetItem;
+                }
+            } else {
+                financialData.budgetBuddy.push(budgetItem);
+            }
+            
+            financialData.save();
+            closeModal('addBudgetBuddyModal');
+            renderBudgetBuddyList();
+            updateDashboard();
+        }
+
+        function renderBudgetBuddyList() {
+            const container = $('budgetBuddyList');
+            
+            if (financialData.budgetBuddy.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💰</div>
+                        <div class="empty-state-text">No budget items added yet</div>
+                        <button class="btn btn-primary" onclick="openAddBudgetBuddyModal()">Add Your First Budget Item</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const budgetHtml = financialData.budgetBuddy.map(item => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">${item.name}</div>
+                        <div class="list-item-details">
+                            <span class="amount negative">${formatCurrency(item.amount)}</span>
+                            <span class="frequency-badge">${item.frequency}</span>
+                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="icon-btn" onclick="editBudgetBuddy('${item.id}')">✏️</button>
+                        <button class="icon-btn" onclick="toggleItem('budgetBuddy', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                        <button class="icon-btn" onclick="deleteItem('budgetBuddy', '${item.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = budgetHtml;
+        }
+
+        function editBudgetBuddy(id) {
+            const budgetItem = financialData.budgetBuddy.find(i => i.id === id);
+            if (!budgetItem) return;
+            
+            const form = $('addBudgetBuddyForm');
+            form.dataset.editId = id;
+            form.name.value = budgetItem.name;
+            form.amount.value = budgetItem.amount;
+            form.frequency.value = budgetItem.frequency;
+            form.startDate.value = budgetItem.startDate;
+            
+            $('addBudgetBuddyModal').querySelector('.modal-title').textContent = 'Edit Budget Item';
+            openModal('addBudgetBuddyModal');
+        }
+
         // Expense Management
         function openAddExpenseModal() {
             $('addExpenseForm').reset();
             $('addExpenseForm').dataset.editId = '';
-            $('addExpenseModal').querySelector('.modal-title').textContent = 'Add Fixed Expense';
+            $('addExpenseModal').querySelector('.modal-title').textContent = 'Add Coast Capital Expense';
             openModal('addExpenseModal');
         }
 
@@ -1799,7 +1919,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">🏠</div>
-                        <div class="empty-state-text">No fixed expenses added yet</div>
+                        <div class="empty-state-text">No Coast Capital expenses added yet</div>
                         <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
                     </div>
                 `;
@@ -1838,7 +1958,7 @@
             form.frequency.value = expense.frequency;
             form.startDate.value = expense.startDate;
             
-            $('addExpenseModal').querySelector('.modal-title').textContent = 'Edit Fixed Expense';
+            $('addExpenseModal').querySelector('.modal-title').textContent = 'Edit Coast Capital Expense';
             openModal('addExpenseModal');
         }
 
@@ -1846,7 +1966,7 @@
         function openAddSubscriptionModal() {
             $('addSubscriptionForm').reset();
             $('addSubscriptionForm').dataset.editId = '';
-            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Add Subscription';
+            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Add Neo Credit Card Expense';
             openModal('addSubscriptionModal');
         }
 
@@ -1887,7 +2007,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📺</div>
-                        <div class="empty-state-text">No subscriptions added yet</div>
+                        <div class="empty-state-text">No Neo Credit Card expenses added yet</div>
                         <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Subscription</button>
                     </div>
                 `;
@@ -1926,16 +2046,15 @@
             form.frequency.value = subscription.frequency;
             form.startDate.value = subscription.startDate;
             
-            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Subscription';
+            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Neo Credit Card Expense';
             openModal('addSubscriptionModal');
         }
 
         // Monthly Variables Management
         function openAddVariableModal() {
-            const currentData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0, notes: '' };
+            const currentData = financialData.monthlyVariables[financialData.currentMonth] || { otherExpenses: 0, notes: '' };
             
             const form = $('addVariableForm');
-            form.budgetBuddy.value = currentData.budgetBuddyTotal;
             form.otherExpenses.value = currentData.otherExpenses;
             form.notes.value = currentData.notes || '';
             
@@ -1949,7 +2068,6 @@
             
             financialData.monthlyVariables[financialData.currentMonth] = {
                 month: financialData.currentMonth,
-                budgetBuddyTotal: parseFloat(formData.get('budgetBuddy')),
                 otherExpenses: parseFloat(formData.get('otherExpenses')),
                 notes: formData.get('notes')
             };
@@ -1961,9 +2079,8 @@
         }
 
         function renderVariablesTab() {
-            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
+            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { otherExpenses: 0 };
             
-            $('monthlyBudgetBuddy').textContent = formatCurrency(monthData.budgetBuddyTotal);
             $('monthlyOtherExpenses').textContent = formatCurrency(monthData.otherExpenses);
             
             // Render history
@@ -1987,9 +2104,7 @@
                     <thead>
                         <tr>
                             <th>Month</th>
-                            <th>Budget Buddy</th>
                             <th>Other Expenses</th>
-                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1997,13 +2112,11 @@
                             const [year, monthNum] = month.split('-');
                             const date = new Date(year, monthNum - 1);
                             const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                            const total = data.budgetBuddyTotal + data.otherExpenses;
+                            const total = data.otherExpenses || 0;
                             
                             return `
                                 <tr>
                                     <td>${monthName}</td>
-                                    <td class="amount">${formatCurrency(data.budgetBuddyTotal)}</td>
-                                    <td class="amount">${formatCurrency(data.otherExpenses)}</td>
                                     <td class="amount negative">${formatCurrency(total)}</td>
                                 </tr>
                             `;
@@ -2042,13 +2155,15 @@
             
             // Calculate expense breakdown
             const expenseBreakdown = {
-                'Fixed Expenses': financialData.expenses
+                'Budget Buddy': financialData.budgetBuddy
+                    .filter(b => b.isActive)
+                    .reduce((sum, b) => sum + financialData.calculateMonthlyAmount(b), 0),
+                'Coast Capital Account': financialData.expenses
                     .filter(e => e.isActive)
                     .reduce((sum, e) => sum + financialData.calculateMonthlyAmount(e), 0),
-                'Subscriptions': financialData.subscriptions
+                'Neo Credit Card': financialData.subscriptions
                     .filter(s => s.isActive)
                     .reduce((sum, s) => sum + financialData.calculateMonthlyAmount(s), 0),
-                'Budget Buddy': financialData.monthlyVariables[financialData.currentMonth]?.budgetBuddyTotal || 0,
                 'Other Variables': financialData.monthlyVariables[financialData.currentMonth]?.otherExpenses || 0
             };
             
@@ -2089,12 +2204,10 @@
         // Settings
         function loadSettings() {
             $('savingsGoal').value = financialData.settings.savingsGoal;
-            $('budgetBuddyLimit').value = financialData.settings.budgetBuddyLimit;
         }
 
         function saveSettings() {
             financialData.settings.savingsGoal = parseFloat($('savingsGoal').value);
-            financialData.settings.budgetBuddyLimit = parseFloat($('budgetBuddyLimit').value);
             financialData.save();
             updateDashboard();
             alert('Settings saved successfully!');
@@ -2153,6 +2266,9 @@
                     case 'income':
                         renderIncomeList();
                         break;
+                    case 'budgetBuddy':
+                        renderBudgetBuddyList();
+                        break;
                     case 'expenses':
                         renderExpensesList();
                         break;
@@ -2177,6 +2293,9 @@
                 switch (type) {
                     case 'income':
                         renderIncomeList();
+                        break;
+                    case 'budgetBuddy':
+                        renderBudgetBuddyList();
                         break;
                     case 'expenses':
                         renderExpensesList();
