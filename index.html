@@ -1421,6 +1421,147 @@
         .file-input-label:hover {
             background-color: #d1d5db;
         }
+
+        /* Financial Statement Styles */
+        .networth-dashboard {
+            margin-bottom: 2rem;
+        }
+
+        .networth-dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .networth-metric-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .networth-metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .networth-metric-card.assets {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.25);
+        }
+
+        .networth-metric-card.liabilities {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.25);
+        }
+
+        .networth-metric-card.networth {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+        }
+
+        .networth-metric-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .networth-metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .networth-metric-change {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .asset-liability-table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .asset-liability-table th,
+        .asset-liability-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .asset-liability-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-liability-table tr:hover {
+            background-color: var(--background);
+        }
+
+        .asset-liability-table .amount {
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .asset-liability-table .last-updated {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .asset-liability-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .asset-liability-category.property {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .asset-liability-category.vehicle {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .asset-liability-category.investment {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .asset-liability-category.cash {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .asset-liability-category.mortgage {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .asset-liability-category.credit {
+            background-color: #fce7f3;
+            color: #9f1239;
+        }
+
+        .asset-liability-category.loan {
+            background-color: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .asset-liability-category.other {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
     </style>
 </head>
 <body>
@@ -1450,6 +1591,7 @@
             <button class="nav-tab" data-tab="expenses">Coast Capital Account</button>
             <button class="nav-tab" data-tab="subscriptions">Neo Credit Card</button>
             <button class="nav-tab" data-tab="notes">Notes</button>
+            <button class="nav-tab" data-tab="networth">Financial Statement</button>
             <button class="nav-tab" data-tab="analytics">Analytics</button>
             <button class="nav-tab" data-tab="settings">Settings</button>
         </nav>
@@ -1846,8 +1988,208 @@
                     <button class="btn btn-danger" onclick="confirmClearData()">Clear All Data</button>
                 </div>
             </div>
+
+            <!-- Financial Statement Tab -->
+            <div id="networth" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Financial Statement</h2>
+                        <p class="section-subtitle">Track your net worth through assets and liabilities</p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Summary -->
+                <div class="networth-dashboard">
+                    <div class="networth-dashboard-cards">
+                        <div class="networth-metric-card assets">
+                            <div class="networth-metric-label">Total Assets</div>
+                            <div class="networth-metric-value" id="totalAssets">$0.00</div>
+                        </div>
+                        <div class="networth-metric-card liabilities">
+                            <div class="networth-metric-label">Total Liabilities</div>
+                            <div class="networth-metric-value" id="totalLiabilities">$0.00</div>
+                        </div>
+                        <div class="networth-metric-card networth">
+                            <div class="networth-metric-label">Net Worth</div>
+                            <div class="networth-metric-value" id="totalNetWorth">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assets Section -->
+                <div class="card">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Assets</h3>
+                            <p class="section-subtitle">Properties, investments, and valuable possessions</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddAssetModal()">
+                            <span class="icon">+</span>
+                            Add Asset
+                        </button>
+                    </div>
+
+                    <div id="assetsList"></div>
+                </div>
+
+                <!-- Liabilities Section -->
+                <div class="card mt-3">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">Liabilities</h3>
+                            <p class="section-subtitle">Loans, mortgages, and other debts</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddLiabilityModal()">
+                            <span class="icon">+</span>
+                            Add Liability
+                        </button>
+                    </div>
+
+                    <div id="liabilitiesList"></div>
+                </div>
+            </div>
         </div>
     </main>
+
+    <!-- Add Asset Modal -->
+    <div id="addAssetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Asset</h2>
+                <button class="modal-close" onclick="closeModal('addAssetModal')">&times;</button>
+            </div>
+            <form onsubmit="saveAsset(event)">
+                <div class="form-group">
+                    <label for="assetName">Asset Name</label>
+                    <input type="text" id="assetName" name="assetName" required>
+                </div>
+                <div class="form-group">
+                    <label for="assetCategory">Category</label>
+                    <select id="assetCategory" name="assetCategory" required>
+                        <option value="property">Property</option>
+                        <option value="vehicle">Vehicle</option>
+                        <option value="investment">Investment</option>
+                        <option value="cash">Cash</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assetValue">Current Value</label>
+                    <input type="number" id="assetValue" name="assetValue" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="assetNotes">Notes (Optional)</label>
+                    <textarea id="assetNotes" name="assetNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Asset</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Asset Modal -->
+    <div id="editAssetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Asset</h2>
+                <button class="modal-close" onclick="closeModal('editAssetModal')">&times;</button>
+            </div>
+            <form onsubmit="updateAsset(event)">
+                <input type="hidden" id="editAssetId" name="editAssetId">
+                <div class="form-group">
+                    <label for="editAssetName">Asset Name</label>
+                    <input type="text" id="editAssetName" name="editAssetName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAssetCategory">Category</label>
+                    <select id="editAssetCategory" name="editAssetCategory" required>
+                        <option value="property">Property</option>
+                        <option value="vehicle">Vehicle</option>
+                        <option value="investment">Investment</option>
+                        <option value="cash">Cash</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAssetValue">Current Value</label>
+                    <input type="number" id="editAssetValue" name="editAssetValue" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAssetNotes">Notes (Optional)</label>
+                    <textarea id="editAssetNotes" name="editAssetNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Asset</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Liability Modal -->
+    <div id="addLiabilityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Liability</h2>
+                <button class="modal-close" onclick="closeModal('addLiabilityModal')">&times;</button>
+            </div>
+            <form onsubmit="saveLiability(event)">
+                <div class="form-group">
+                    <label for="liabilityName">Liability Name</label>
+                    <input type="text" id="liabilityName" name="liabilityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="liabilityCategory">Category</label>
+                    <select id="liabilityCategory" name="liabilityCategory" required>
+                        <option value="mortgage">Mortgage</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="loan">Loan</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="liabilityValue">Current Balance</label>
+                    <input type="number" id="liabilityValue" name="liabilityValue" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="liabilityNotes">Notes (Optional)</label>
+                    <textarea id="liabilityNotes" name="liabilityNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Liability</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Liability Modal -->
+    <div id="editLiabilityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Liability</h2>
+                <button class="modal-close" onclick="closeModal('editLiabilityModal')">&times;</button>
+            </div>
+            <form onsubmit="updateLiability(event)">
+                <input type="hidden" id="editLiabilityId" name="editLiabilityId">
+                <div class="form-group">
+                    <label for="editLiabilityName">Liability Name</label>
+                    <input type="text" id="editLiabilityName" name="editLiabilityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLiabilityCategory">Category</label>
+                    <select id="editLiabilityCategory" name="editLiabilityCategory" required>
+                        <option value="mortgage">Mortgage</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="loan">Loan</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editLiabilityValue">Current Balance</label>
+                    <input type="number" id="editLiabilityValue" name="editLiabilityValue" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLiabilityNotes">Notes (Optional)</label>
+                    <textarea id="editLiabilityNotes" name="editLiabilityNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Liability</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Add Income Modal -->
     <div id="addIncomeModal" class="modal">
@@ -2161,6 +2503,8 @@
                 this.subscriptions = [];
                 this.monthlyVariables = {}; // Keep for backwards compatibility
                 this.notes = []; // New notes array
+                this.assets = []; // Financial statement assets
+                this.liabilities = []; // Financial statement liabilities
                 this.settings = {
                     savingsGoal: 700,
                     theme: 'light'
@@ -2195,6 +2539,13 @@
                     // Ensure notes array exists for backwards compatibility
                     if (!this.notes) {
                         this.notes = [];
+                    }
+                    // Ensure assets and liabilities arrays exist for backwards compatibility
+                    if (!this.assets) {
+                        this.assets = [];
+                    }
+                    if (!this.liabilities) {
+                        this.liabilities = [];
                     }
                     // Remove old budgetBuddyLimit from settings
                     if (this.settings && this.settings.budgetBuddyLimit !== undefined) {
@@ -2638,6 +2989,11 @@
                         break;
                     case 'notes':
                         renderNotesList();
+                        break;
+                    case 'networth':
+                        renderNetWorthDashboard();
+                        renderAssetsList();
+                        renderLiabilitiesList();
                         break;
                     case 'analytics':
                         updateAnalytics();
@@ -3627,6 +3983,271 @@
                 }
                 
                 updateDashboard();
+            }
+        }
+
+        // Financial Statement Management
+        function renderNetWorthDashboard() {
+            const totalAssets = financialData.assets
+                .filter(a => a.isActive)
+                .reduce((sum, asset) => sum + asset.value, 0);
+            
+            const totalLiabilities = financialData.liabilities
+                .filter(l => l.isActive)
+                .reduce((sum, liability) => sum + liability.value, 0);
+            
+            const netWorth = totalAssets - totalLiabilities;
+            
+            $('totalAssets').textContent = formatCurrency(totalAssets);
+            $('totalLiabilities').textContent = formatCurrency(totalLiabilities);
+            $('totalNetWorth').textContent = formatCurrency(netWorth);
+        }
+
+        function renderAssetsList() {
+            const assetsList = $('assetsList');
+            const assets = financialData.assets.filter(a => a.isActive);
+            
+            if (assets.length === 0) {
+                assetsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No assets added yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedAssets = assets.sort((a, b) => b.value - a.value);
+            
+            assetsList.innerHTML = `
+                <table class="asset-liability-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Value</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedAssets.map(asset => `
+                            <tr>
+                                <td>
+                                    <div>${asset.name}</div>
+                                    ${asset.notes ? `<div class="text-secondary" style="font-size: 0.875rem; margin-top: 0.25rem;">${asset.notes}</div>` : ''}
+                                </td>
+                                <td>
+                                    <span class="asset-liability-category ${asset.category}">${asset.category}</span>
+                                </td>
+                                <td class="amount positive">${formatCurrency(asset.value)}</td>
+                                <td class="last-updated">${new Date(asset.lastUpdated).toLocaleDateString()}</td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="editAsset('${asset.id}')">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteAsset('${asset.id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderLiabilitiesList() {
+            const liabilitiesList = $('liabilitiesList');
+            const liabilities = financialData.liabilities.filter(l => l.isActive);
+            
+            if (liabilities.length === 0) {
+                liabilitiesList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No liabilities added yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedLiabilities = liabilities.sort((a, b) => b.value - a.value);
+            
+            liabilitiesList.innerHTML = `
+                <table class="asset-liability-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Balance</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedLiabilities.map(liability => `
+                            <tr>
+                                <td>
+                                    <div>${liability.name}</div>
+                                    ${liability.notes ? `<div class="text-secondary" style="font-size: 0.875rem; margin-top: 0.25rem;">${liability.notes}</div>` : ''}
+                                </td>
+                                <td>
+                                    <span class="asset-liability-category ${liability.category}">${liability.category}</span>
+                                </td>
+                                <td class="amount negative">${formatCurrency(liability.value)}</td>
+                                <td class="last-updated">${new Date(liability.lastUpdated).toLocaleDateString()}</td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="editLiability('${liability.id}')">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteLiability('${liability.id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Asset CRUD Operations
+        function openAddAssetModal() {
+            openModal('addAssetModal');
+        }
+
+        function saveAsset(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const asset = {
+                id: 'asset_' + Date.now(),
+                name: formData.get('assetName'),
+                category: formData.get('assetCategory'),
+                value: parseFloat(formData.get('assetValue')),
+                notes: formData.get('assetNotes'),
+                lastUpdated: new Date().toISOString(),
+                isActive: true
+            };
+            
+            financialData.assets.push(asset);
+            financialData.save();
+            
+            closeModal('addAssetModal');
+            form.reset();
+            renderAssetsList();
+            renderNetWorthDashboard();
+        }
+
+        function editAsset(assetId) {
+            const asset = financialData.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            $('editAssetId').value = asset.id;
+            $('editAssetName').value = asset.name;
+            $('editAssetCategory').value = asset.category;
+            $('editAssetValue').value = asset.value;
+            $('editAssetNotes').value = asset.notes || '';
+            
+            openModal('editAssetModal');
+        }
+
+        function updateAsset(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const assetId = formData.get('editAssetId');
+            
+            const asset = financialData.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            asset.name = formData.get('editAssetName');
+            asset.category = formData.get('editAssetCategory');
+            asset.value = parseFloat(formData.get('editAssetValue'));
+            asset.notes = formData.get('editAssetNotes');
+            asset.lastUpdated = new Date().toISOString();
+            
+            financialData.save();
+            closeModal('editAssetModal');
+            renderAssetsList();
+            renderNetWorthDashboard();
+        }
+
+        function deleteAsset(assetId) {
+            if (confirm('Are you sure you want to delete this asset?')) {
+                const asset = financialData.assets.find(a => a.id === assetId);
+                if (asset) {
+                    asset.isActive = false;
+                    financialData.save();
+                    renderAssetsList();
+                    renderNetWorthDashboard();
+                }
+            }
+        }
+
+        // Liability CRUD Operations
+        function openAddLiabilityModal() {
+            openModal('addLiabilityModal');
+        }
+
+        function saveLiability(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const liability = {
+                id: 'liability_' + Date.now(),
+                name: formData.get('liabilityName'),
+                category: formData.get('liabilityCategory'),
+                value: parseFloat(formData.get('liabilityValue')),
+                notes: formData.get('liabilityNotes'),
+                lastUpdated: new Date().toISOString(),
+                isActive: true
+            };
+            
+            financialData.liabilities.push(liability);
+            financialData.save();
+            
+            closeModal('addLiabilityModal');
+            form.reset();
+            renderLiabilitiesList();
+            renderNetWorthDashboard();
+        }
+
+        function editLiability(liabilityId) {
+            const liability = financialData.liabilities.find(l => l.id === liabilityId);
+            if (!liability) return;
+            
+            $('editLiabilityId').value = liability.id;
+            $('editLiabilityName').value = liability.name;
+            $('editLiabilityCategory').value = liability.category;
+            $('editLiabilityValue').value = liability.value;
+            $('editLiabilityNotes').value = liability.notes || '';
+            
+            openModal('editLiabilityModal');
+        }
+
+        function updateLiability(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const liabilityId = formData.get('editLiabilityId');
+            
+            const liability = financialData.liabilities.find(l => l.id === liabilityId);
+            if (!liability) return;
+            
+            liability.name = formData.get('editLiabilityName');
+            liability.category = formData.get('editLiabilityCategory');
+            liability.value = parseFloat(formData.get('editLiabilityValue'));
+            liability.notes = formData.get('editLiabilityNotes');
+            liability.lastUpdated = new Date().toISOString();
+            
+            financialData.save();
+            closeModal('editLiabilityModal');
+            renderLiabilitiesList();
+            renderNetWorthDashboard();
+        }
+
+        function deleteLiability(liabilityId) {
+            if (confirm('Are you sure you want to delete this liability?')) {
+                const liability = financialData.liabilities.find(l => l.id === liabilityId);
+                if (liability) {
+                    liability.isActive = false;
+                    financialData.save();
+                    renderLiabilitiesList();
+                    renderNetWorthDashboard();
+                }
             }
         }
 
