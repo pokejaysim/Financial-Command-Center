@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Command Center</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --background: #ffffff;
+            --card-background: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --shadow-md: rgba(0, 0, 0, 0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --radius: 12px;
+            --spacing: 1.5rem;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --success-color: #22c55e;
+            --warning-color: #fbbf24;
+            --danger-color: #f87171;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --background: #111827;
+            --card-background: #1f2937;
+            --border-color: #374151;
+            --shadow: rgba(0, 0, 0, 0.2);
+            --shadow-md: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--background);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin: var(--spacing) 0;
+            border-bottom: 2px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin: var(--spacing) 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-background);
+            border-radius: var(--radius);
+            padding: var(--spacing);
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 6px var(--shadow-md);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing);
+            margin-bottom: var(--spacing);
+        }
+
+        .metric-card {
+            background-color: var(--card-background);
+            border-radius: var(--radius);
+            padding: var(--spacing);
+            box-shadow: 0 1px 3px var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-trend {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .metric-trend.positive {
+            color: var(--success-color);
+        }
+
+        .metric-trend.negative {
+            color: var(--danger-color);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: var(--border-color);
+            border-radius: 9999px;
+            height: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success-color);
+            transition: width 0.5s ease;
+            border-radius: 9999px;
+        }
+
+        .progress-bar.warning {
+            background-color: var(--warning-color);
+        }
+
+        .progress-bar.danger {
+            background-color: var(--danger-color);
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-indicator.success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-indicator.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-indicator.danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: calc(var(--radius) / 2);
+            background-color: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: calc(var(--radius) / 2);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr:hover {
+            background-color: var(--background);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px var(--shadow-md);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: calc(var(--radius) / 2);
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Charts Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .data-table {
+                font-size: 0.875rem;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gap-1 { gap: 0.5rem; }
+        .gap-2 { gap: 1rem; }
+        .gap-3 { gap: 1.5rem; }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Budget Buddy Special Styling */
+        .budget-buddy-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .budget-buddy-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+        }
+
+        .budget-buddy-limit {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border-radius: calc(var(--radius) / 2);
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Frequency Badge */
+        .frequency-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        /* Amount Display */
+        .amount {
+            font-weight: 600;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        }
+
+        .amount.positive {
+            color: var(--success-color);
+        }
+
+        .amount.negative {
+            color: var(--danger-color);
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--background);
+            border-radius: calc(var(--radius) / 2);
+        }
+
+        .quick-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Chart Canvas Styling */
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--text-primary);
+            color: var(--background);
+            text-align: center;
+            border-radius: calc(var(--radius) / 2);
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* List Items */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--background);
+            border-radius: calc(var(--radius) / 2);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .list-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .list-item-info {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .list-item-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Import/Export Area */
+        .import-export-area {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--border-color);
+            color: var(--text-primary);
+            border-radius: calc(var(--radius) / 2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background-color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">💰 Financial Command Center</h1>
+                <div class="header-controls">
+                    <div class="month-selector">
+                        <button id="prevMonth" class="icon-btn">←</button>
+                        <span id="currentMonth">January 2025</span>
+                        <button id="nextMonth" class="icon-btn">→</button>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">🌙</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <div class="container">
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-tab" data-tab="income">Income</button>
+            <button class="nav-tab" data-tab="expenses">Fixed Expenses</button>
+            <button class="nav-tab" data-tab="subscriptions">Subscriptions</button>
+            <button class="nav-tab" data-tab="variables">Monthly Variables</button>
+            <button class="nav-tab" data-tab="analytics">Analytics</button>
+            <button class="nav-tab" data-tab="settings">Settings</button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- Monthly Income Card -->
+                    <div class="metric-card">
+                        <div class="metric-label">Monthly Income</div>
+                        <div class="metric-value amount positive" id="monthlyIncome">$0.00</div>
+                        <div class="metric-trend positive">
+                            <span>↑</span>
+                            <span id="incomeTrend">0% from last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Expenses Card -->
+                    <div class="metric-card">
+                        <div class="metric-label">Total Monthly Expenses</div>
+                        <div class="metric-value amount negative" id="totalExpenses">$0.00</div>
+                        <div class="metric-trend negative">
+                            <span>↑</span>
+                            <span id="expensesTrend">0% from last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Available for Savings Card -->
+                    <div class="metric-card">
+                        <div class="metric-label">Available for Savings</div>
+                        <div class="metric-value amount" id="availableSavings">$0.00</div>
+                        <div class="status-indicator success" id="savingsStatus">
+                            <span>●</span>
+                            <span>On Track</span>
+                        </div>
+                    </div>
+
+                    <!-- Days Left Card -->
+                    <div class="metric-card">
+                        <div class="metric-label">Days Left in Month</div>
+                        <div class="metric-value" id="daysLeft">30</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="monthProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Goal Progress -->
+                <div class="card">
+                    <h2 class="section-title">Monthly Savings Goal Progress</h2>
+                    <p class="section-subtitle">Target: $700/month</p>
+                    <div class="progress-container" style="height: 24px; margin: 1.5rem 0;">
+                        <div class="progress-bar" id="savingsProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="flex-between">
+                        <span class="amount" id="currentSavings">$0</span>
+                        <span class="text-secondary">$700 goal</span>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card mt-3">
+                    <h3 class="mb-3">Quick Overview</h3>
+                    <div class="quick-stats">
+                        <div class="quick-stat">
+                            <div class="quick-stat-value" id="totalIncomeItems">0</div>
+                            <div class="quick-stat-label">Income Sources</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value" id="totalExpenseItems">0</div>
+                            <div class="quick-stat-label">Fixed Expenses</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value" id="totalSubscriptions">0</div>
+                            <div class="quick-stat-label">Subscriptions</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value amount" id="budgetBuddyAmount">$0</div>
+                            <div class="quick-stat-label">Budget Buddy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Buddy Card -->
+                <div class="card budget-buddy-card mt-3">
+                    <div class="budget-buddy-limit">Limit: $750</div>
+                    <h3 style="color: white; margin-bottom: 1rem;">Budget Buddy Status</h3>
+                    <div class="metric-value" style="color: white;" id="budgetBuddyStatus">$0 / $750</div>
+                    <div class="progress-container" style="background-color: rgba(255,255,255,0.2); margin-top: 1rem;">
+                        <div class="progress-bar" id="budgetBuddyProgress" style="background-color: white; width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income Tab -->
+            <div id="income" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Income Sources</h2>
+                        <p class="section-subtitle">Manage your recurring income</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddIncomeModal()">
+                        <span>+</span>
+                        <span>Add Income</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div id="incomeList" class="empty-state">
+                        <div class="empty-state-icon">💵</div>
+                        <div class="empty-state-text">No income sources added yet</div>
+                        <button class="btn btn-primary" onclick="openAddIncomeModal()">Add Your First Income Source</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expenses Tab -->
+            <div id="expenses" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Fixed Recurring Expenses</h2>
+                        <p class="section-subtitle">Mortgage, utilities, insurance, etc.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddExpenseModal()">
+                        <span>+</span>
+                        <span>Add Expense</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div id="expensesList" class="empty-state">
+                        <div class="empty-state-icon">🏠</div>
+                        <div class="empty-state-text">No fixed expenses added yet</div>
+                        <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriptions Tab -->
+            <div id="subscriptions" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Subscriptions</h2>
+                        <p class="section-subtitle">Netflix, Spotify, software subscriptions, etc.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddSubscriptionModal()">
+                        <span>+</span>
+                        <span>Add Subscription</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div id="subscriptionsList" class="empty-state">
+                        <div class="empty-state-icon">📺</div>
+                        <div class="empty-state-text">No subscriptions added yet</div>
+                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Subscription</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Variables Tab -->
+            <div id="variables" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Monthly Variables</h2>
+                        <p class="section-subtitle">Budget Buddy and other variable expenses</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddVariableModal()">
+                        <span>+</span>
+                        <span>Update This Month</span>
+                    </button>
+                </div>
+
+                <div class="card budget-buddy-card">
+                    <h3 style="color: white;">Budget Buddy Total</h3>
+                    <div class="metric-value" style="color: white;" id="monthlyBudgetBuddy">$0.00</div>
+                    <div class="budget-buddy-limit">Monthly Limit: $750</div>
+                </div>
+
+                <div class="card mt-3">
+                    <h3>Other Variable Expenses</h3>
+                    <div class="metric-value amount negative" id="monthlyOtherExpenses">$0.00</div>
+                </div>
+
+                <div class="card mt-3">
+                    <h3>Monthly History</h3>
+                    <div id="variablesHistory" class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <div class="empty-state-text">No monthly data recorded yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Financial Analytics</h2>
+                        <p class="section-subtitle">Track your financial trends and patterns</p>
+                    </div>
+                </div>
+
+                <!-- Savings Trend Chart -->
+                <div class="card">
+                    <h3>Savings Trend (Last 6 Months)</h3>
+                    <div class="chart-container">
+                        <canvas id="savingsTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Expense Breakdown Chart -->
+                <div class="card mt-3">
+                    <h3>Expense Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="expenseBreakdownChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Year to Date Summary -->
+                <div class="card mt-3">
+                    <h3>Year-to-Date Summary</h3>
+                    <div class="quick-stats">
+                        <div class="quick-stat">
+                            <div class="quick-stat-value amount positive" id="ytdIncome">$0</div>
+                            <div class="quick-stat-label">Total Income</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value amount negative" id="ytdExpenses">$0</div>
+                            <div class="quick-stat-label">Total Expenses</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value amount" id="ytdSavings">$0</div>
+                            <div class="quick-stat-label">Total Saved</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value" id="ytdSavingsRate">0%</div>
+                            <div class="quick-stat-label">Savings Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Settings</h2>
+                        <p class="section-subtitle">Manage your preferences and data</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Preferences</h3>
+                    <div class="form-group">
+                        <label>Monthly Savings Goal</label>
+                        <input type="number" id="savingsGoal" value="700" step="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Budget Buddy Monthly Limit</label>
+                        <input type="number" id="budgetBuddyLimit" value="750" step="50">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+
+                <div class="card mt-3">
+                    <h3>Data Management</h3>
+                    <div class="import-export-area">
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary" onclick="exportData()">
+                                <span>📥</span>
+                                <span>Export Data</span>
+                            </button>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+                                <label for="importFile" class="file-input-label">
+                                    <span>📤</span>
+                                    <span>Import Data</span>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-secondary mt-2">Export your data for backup or import from a previous backup</p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <h3>Danger Zone</h3>
+                    <p class="text-secondary mb-2">These actions cannot be undone</p>
+                    <button class="btn btn-danger" onclick="confirmClearData()">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Income Modal -->
+    <div id="addIncomeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Income Source</h2>
+                <button class="close-btn" onclick="closeModal('addIncomeModal')">×</button>
+            </div>
+            <form id="addIncomeForm" onsubmit="saveIncome(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required placeholder="e.g., Salary, Freelance Work">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" name="amount" required step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select name="frequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Bi-weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Income</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addIncomeModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Fixed Expense</h2>
+                <button class="close-btn" onclick="closeModal('addExpenseModal')">×</button>
+            </div>
+            <form id="addExpenseForm" onsubmit="saveExpense(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required placeholder="e.g., Mortgage, Car Insurance">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" name="amount" required step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select name="frequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Bi-weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Expense</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addExpenseModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Subscription Modal -->
+    <div id="addSubscriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Subscription</h2>
+                <button class="close-btn" onclick="closeModal('addSubscriptionModal')">×</button>
+            </div>
+            <form id="addSubscriptionForm" onsubmit="saveSubscription(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required placeholder="e.g., Netflix, Spotify">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" name="amount" required step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select name="frequency" required>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Subscription</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addSubscriptionModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Variable Modal -->
+    <div id="addVariableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Update Monthly Variables</h2>
+                <button class="close-btn" onclick="closeModal('addVariableModal')">×</button>
+            </div>
+            <form id="addVariableForm" onsubmit="saveVariable(event)">
+                <div class="form-group">
+                    <label>Budget Buddy Total</label>
+                    <input type="number" name="budgetBuddy" required step="0.01" min="0" max="750" placeholder="0.00">
+                    <small class="text-secondary">Maximum: $750</small>
+                </div>
+                <div class="form-group">
+                    <label>Other Variable Expenses</label>
+                    <input type="number" name="otherExpenses" required step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea name="notes" rows="3" placeholder="Any notes about this month's expenses"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Variables</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addVariableModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js Library (Minimal Implementation) -->
+    <script>
+        // Simple Chart Drawing Functions
+        function drawLineChart(canvasId, labels, data, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (data.length === 0) {
+                ctx.fillStyle = 'var(--text-secondary)';
+                ctx.font = '14px var(--font-family)';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data available', width / 2, height / 2);
+                return;
+            }
+            
+            // Find min and max values
+            const maxValue = Math.max(...data, 700); // Include goal line
+            const minValue = 0;
+            const range = maxValue - minValue;
+            
+            // Drawing area
+            const padding = 40;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            // Draw axes
+            ctx.strokeStyle = 'var(--border-color)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+            
+            // Draw goal line at $700
+            ctx.strokeStyle = 'var(--success-color)';
+            ctx.setLineDash([5, 5]);
+            const goalY = height - padding - (700 / maxValue) * chartHeight;
+            ctx.beginPath();
+            ctx.moveTo(padding, goalY);
+            ctx.lineTo(width - padding, goalY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Draw data points and lines
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2;
+            
+            const pointSpacing = chartWidth / (data.length - 1 || 1);
+            
+            ctx.beginPath();
+            data.forEach((value, index) => {
+                const x = padding + index * pointSpacing;
+                const y = height - padding - (value / maxValue) * chartHeight;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+            
+            // Draw points
+            data.forEach((value, index) => {
+                const x = padding + index * pointSpacing;
+                const y = height - padding - (value / maxValue) * chartHeight;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw labels
+            ctx.fillStyle = 'var(--text-secondary)';
+            ctx.font = '12px var(--font-family)';
+            ctx.textAlign = 'center';
+            
+            labels.forEach((label, index) => {
+                const x = padding + index * pointSpacing;
+                ctx.fillText(label, x, height - padding + 20);
+            });
+        }
+
+        function drawPieChart(canvasId, labels, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (data.length === 0 || data.reduce((a, b) => a + b, 0) === 0) {
+                ctx.fillStyle = 'var(--text-secondary)';
+                ctx.font = '14px var(--font-family)';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data available', width / 2, height / 2);
+                return;
+            }
+            
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 3;
+            
+            const total = data.reduce((a, b) => a + b, 0);
+            let currentAngle = -Math.PI / 2;
+            
+            data.forEach((value, index) => {
+                const sliceAngle = (value / total) * Math.PI * 2;
+                
+                // Draw slice
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 1.3);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 1.3);
+                
+                ctx.fillStyle = 'var(--text-primary)';
+                ctx.font = '12px var(--font-family)';
+                ctx.textAlign = labelX > centerX ? 'left' : 'right';
+                ctx.fillText(`${labels[index]} (${((value / total) * 100).toFixed(1)}%)`, labelX, labelY);
+                
+                currentAngle += sliceAngle;
+            });
+        }
+    </script>
+
+    <!-- Main JavaScript -->
+    <script>
+        // Data Models
+        class FinancialData {
+            constructor() {
+                this.income = [];
+                this.expenses = [];
+                this.subscriptions = [];
+                this.monthlyVariables = {};
+                this.settings = {
+                    savingsGoal: 700,
+                    budgetBuddyLimit: 750,
+                    theme: 'light'
+                };
+                this.currentMonth = new Date().toISOString().slice(0, 7);
+            }
+
+            load() {
+                const saved = localStorage.getItem('financialData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    Object.assign(this, data);
+                }
+            }
+
+            save() {
+                localStorage.setItem('financialData', JSON.stringify(this));
+            }
+
+            calculateMonthlyAmount(item) {
+                const amount = parseFloat(item.amount);
+                switch (item.frequency) {
+                    case 'weekly':
+                        return amount * 52 / 12;
+                    case 'biweekly':
+                        return amount * 26 / 12;
+                    case 'monthly':
+                        return amount;
+                    case 'annual':
+                        return amount / 12;
+                    default:
+                        return amount;
+                }
+            }
+
+            getMonthlyIncome() {
+                return this.income
+                    .filter(item => item.isActive)
+                    .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
+            }
+
+            getMonthlyExpenses() {
+                const fixed = this.expenses
+                    .filter(item => item.isActive)
+                    .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
+                
+                const subs = this.subscriptions
+                    .filter(item => item.isActive)
+                    .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
+                
+                const variables = this.monthlyVariables[this.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
+                
+                return fixed + subs + variables.budgetBuddyTotal + variables.otherExpenses;
+            }
+
+            getAvailableForSavings() {
+                return this.getMonthlyIncome() - this.getMonthlyExpenses();
+            }
+        }
+
+        // Initialize data
+        const financialData = new FinancialData();
+        financialData.load();
+
+        // UI Helper Functions
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Theme Management
+        function initTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            $('themeToggle').textContent = theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Navigation
+        function initNavigation() {
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    showTab(tabName);
+                    
+                    // Update active states
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const activeTab = $(tabName);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                
+                // Refresh content based on tab
+                switch (tabName) {
+                    case 'dashboard':
+                        updateDashboard();
+                        break;
+                    case 'income':
+                        renderIncomeList();
+                        break;
+                    case 'expenses':
+                        renderExpensesList();
+                        break;
+                    case 'subscriptions':
+                        renderSubscriptionsList();
+                        break;
+                    case 'variables':
+                        renderVariablesTab();
+                        break;
+                    case 'analytics':
+                        updateAnalytics();
+                        break;
+                    case 'settings':
+                        loadSettings();
+                        break;
+                }
+            }
+        }
+
+        // Month Navigation
+        function initMonthNavigation() {
+            updateMonthDisplay();
+            
+            $('prevMonth').addEventListener('click', () => {
+                const [year, month] = financialData.currentMonth.split('-').map(Number);
+                const date = new Date(year, month - 2); // -2 because month is 1-indexed and we want previous
+                financialData.currentMonth = date.toISOString().slice(0, 7);
+                updateMonthDisplay();
+                updateDashboard();
+            });
+            
+            $('nextMonth').addEventListener('click', () => {
+                const [year, month] = financialData.currentMonth.split('-').map(Number);
+                const date = new Date(year, month); // month is already the next month due to 0-indexing
+                financialData.currentMonth = date.toISOString().slice(0, 7);
+                updateMonthDisplay();
+                updateDashboard();
+            });
+        }
+
+        function updateMonthDisplay() {
+            const [year, month] = financialData.currentMonth.split('-');
+            const date = new Date(year, month - 1);
+            const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            $('currentMonth').textContent = monthName;
+        }
+
+        // Dashboard Updates
+        function updateDashboard() {
+            const income = financialData.getMonthlyIncome();
+            const expenses = financialData.getMonthlyExpenses();
+            const available = financialData.getAvailableForSavings();
+            
+            // Update main metrics
+            $('monthlyIncome').textContent = formatCurrency(income);
+            $('totalExpenses').textContent = formatCurrency(expenses);
+            $('availableSavings').textContent = formatCurrency(available);
+            $('availableSavings').className = `metric-value amount ${available >= 0 ? 'positive' : 'negative'}`;
+            
+            // Update savings status
+            const savingsStatus = $('savingsStatus');
+            if (available >= financialData.settings.savingsGoal) {
+                savingsStatus.className = 'status-indicator success';
+                savingsStatus.innerHTML = '<span>●</span><span>On Track</span>';
+            } else if (available >= financialData.settings.savingsGoal * 0.8) {
+                savingsStatus.className = 'status-indicator warning';
+                savingsStatus.innerHTML = '<span>●</span><span>Close to Goal</span>';
+            } else {
+                savingsStatus.className = 'status-indicator danger';
+                savingsStatus.innerHTML = '<span>●</span><span>Below Goal</span>';
+            }
+            
+            // Update days left
+            const now = new Date();
+            const [year, month] = financialData.currentMonth.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const currentDay = now.getMonth() === month - 1 ? now.getDate() : 1;
+            const daysLeft = Math.max(0, daysInMonth - currentDay + 1);
+            
+            $('daysLeft').textContent = daysLeft;
+            $('monthProgress').style.width = `${((daysInMonth - daysLeft) / daysInMonth) * 100}%`;
+            
+            // Update savings progress
+            const savingsProgress = Math.min(100, (available / financialData.settings.savingsGoal) * 100);
+            $('savingsProgress').style.width = `${savingsProgress}%`;
+            $('savingsProgress').className = `progress-bar ${available >= financialData.settings.savingsGoal ? 'success' : available >= 0 ? 'warning' : 'danger'}`;
+            $('currentSavings').textContent = formatCurrency(Math.max(0, available));
+            
+            // Update quick stats
+            $('totalIncomeItems').textContent = financialData.income.filter(i => i.isActive).length;
+            $('totalExpenseItems').textContent = financialData.expenses.filter(i => i.isActive).length;
+            $('totalSubscriptions').textContent = financialData.subscriptions.filter(i => i.isActive).length;
+            
+            // Update Budget Buddy
+            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
+            $('budgetBuddyAmount').textContent = formatCurrency(monthData.budgetBuddyTotal);
+            $('budgetBuddyStatus').textContent = `${formatCurrency(monthData.budgetBuddyTotal)} / ${formatCurrency(financialData.settings.budgetBuddyLimit)}`;
+            
+            const buddyProgress = (monthData.budgetBuddyTotal / financialData.settings.budgetBuddyLimit) * 100;
+            $('budgetBuddyProgress').style.width = `${buddyProgress}%`;
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            $(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            $(modalId).classList.remove('active');
+            $(modalId).querySelector('form')?.reset();
+        }
+
+        // Income Management
+        function openAddIncomeModal() {
+            $('addIncomeForm').reset();
+            $('addIncomeForm').dataset.editId = '';
+            $('addIncomeModal').querySelector('.modal-title').textContent = 'Add Income Source';
+            openModal('addIncomeModal');
+        }
+
+        function saveIncome(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const income = {
+                id: form.dataset.editId || generateId(),
+                name: formData.get('name'),
+                amount: parseFloat(formData.get('amount')),
+                frequency: formData.get('frequency'),
+                category: 'income',
+                startDate: formData.get('startDate'),
+                isActive: true
+            };
+            
+            if (form.dataset.editId) {
+                const index = financialData.income.findIndex(i => i.id === form.dataset.editId);
+                if (index !== -1) {
+                    financialData.income[index] = income;
+                }
+            } else {
+                financialData.income.push(income);
+            }
+            
+            financialData.save();
+            closeModal('addIncomeModal');
+            renderIncomeList();
+            updateDashboard();
+        }
+
+        function renderIncomeList() {
+            const container = $('incomeList');
+            
+            if (financialData.income.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💵</div>
+                        <div class="empty-state-text">No income sources added yet</div>
+                        <button class="btn btn-primary" onclick="openAddIncomeModal()">Add Your First Income Source</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const incomeHtml = financialData.income.map(item => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">${item.name}</div>
+                        <div class="list-item-details">
+                            <span class="amount positive">${formatCurrency(item.amount)}</span>
+                            <span class="frequency-badge">${item.frequency}</span>
+                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="icon-btn" onclick="editIncome('${item.id}')">✏️</button>
+                        <button class="icon-btn" onclick="toggleItem('income', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                        <button class="icon-btn" onclick="deleteItem('income', '${item.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = incomeHtml;
+        }
+
+        function editIncome(id) {
+            const income = financialData.income.find(i => i.id === id);
+            if (!income) return;
+            
+            const form = $('addIncomeForm');
+            form.dataset.editId = id;
+            form.name.value = income.name;
+            form.amount.value = income.amount;
+            form.frequency.value = income.frequency;
+            form.startDate.value = income.startDate;
+            
+            $('addIncomeModal').querySelector('.modal-title').textContent = 'Edit Income Source';
+            openModal('addIncomeModal');
+        }
+
+        // Expense Management
+        function openAddExpenseModal() {
+            $('addExpenseForm').reset();
+            $('addExpenseForm').dataset.editId = '';
+            $('addExpenseModal').querySelector('.modal-title').textContent = 'Add Fixed Expense';
+            openModal('addExpenseModal');
+        }
+
+        function saveExpense(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const expense = {
+                id: form.dataset.editId || generateId(),
+                name: formData.get('name'),
+                amount: parseFloat(formData.get('amount')),
+                frequency: formData.get('frequency'),
+                category: 'fixed_expense',
+                startDate: formData.get('startDate'),
+                isActive: true
+            };
+            
+            if (form.dataset.editId) {
+                const index = financialData.expenses.findIndex(e => e.id === form.dataset.editId);
+                if (index !== -1) {
+                    financialData.expenses[index] = expense;
+                }
+            } else {
+                financialData.expenses.push(expense);
+            }
+            
+            financialData.save();
+            closeModal('addExpenseModal');
+            renderExpensesList();
+            updateDashboard();
+        }
+
+        function renderExpensesList() {
+            const container = $('expensesList');
+            
+            if (financialData.expenses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏠</div>
+                        <div class="empty-state-text">No fixed expenses added yet</div>
+                        <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const expensesHtml = financialData.expenses.map(item => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">${item.name}</div>
+                        <div class="list-item-details">
+                            <span class="amount negative">${formatCurrency(item.amount)}</span>
+                            <span class="frequency-badge">${item.frequency}</span>
+                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="icon-btn" onclick="editExpense('${item.id}')">✏️</button>
+                        <button class="icon-btn" onclick="toggleItem('expenses', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                        <button class="icon-btn" onclick="deleteItem('expenses', '${item.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = expensesHtml;
+        }
+
+        function editExpense(id) {
+            const expense = financialData.expenses.find(e => e.id === id);
+            if (!expense) return;
+            
+            const form = $('addExpenseForm');
+            form.dataset.editId = id;
+            form.name.value = expense.name;
+            form.amount.value = expense.amount;
+            form.frequency.value = expense.frequency;
+            form.startDate.value = expense.startDate;
+            
+            $('addExpenseModal').querySelector('.modal-title').textContent = 'Edit Fixed Expense';
+            openModal('addExpenseModal');
+        }
+
+        // Subscription Management
+        function openAddSubscriptionModal() {
+            $('addSubscriptionForm').reset();
+            $('addSubscriptionForm').dataset.editId = '';
+            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Add Subscription';
+            openModal('addSubscriptionModal');
+        }
+
+        function saveSubscription(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const subscription = {
+                id: form.dataset.editId || generateId(),
+                name: formData.get('name'),
+                amount: parseFloat(formData.get('amount')),
+                frequency: formData.get('frequency'),
+                category: 'subscription',
+                startDate: formData.get('startDate'),
+                isActive: true
+            };
+            
+            if (form.dataset.editId) {
+                const index = financialData.subscriptions.findIndex(s => s.id === form.dataset.editId);
+                if (index !== -1) {
+                    financialData.subscriptions[index] = subscription;
+                }
+            } else {
+                financialData.subscriptions.push(subscription);
+            }
+            
+            financialData.save();
+            closeModal('addSubscriptionModal');
+            renderSubscriptionsList();
+            updateDashboard();
+        }
+
+        function renderSubscriptionsList() {
+            const container = $('subscriptionsList');
+            
+            if (financialData.subscriptions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📺</div>
+                        <div class="empty-state-text">No subscriptions added yet</div>
+                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Subscription</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const subscriptionsHtml = financialData.subscriptions.map(item => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">${item.name}</div>
+                        <div class="list-item-details">
+                            <span class="amount negative">${formatCurrency(item.amount)}</span>
+                            <span class="frequency-badge">${item.frequency}</span>
+                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="icon-btn" onclick="editSubscription('${item.id}')">✏️</button>
+                        <button class="icon-btn" onclick="toggleItem('subscriptions', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                        <button class="icon-btn" onclick="deleteItem('subscriptions', '${item.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = subscriptionsHtml;
+        }
+
+        function editSubscription(id) {
+            const subscription = financialData.subscriptions.find(s => s.id === id);
+            if (!subscription) return;
+            
+            const form = $('addSubscriptionForm');
+            form.dataset.editId = id;
+            form.name.value = subscription.name;
+            form.amount.value = subscription.amount;
+            form.frequency.value = subscription.frequency;
+            form.startDate.value = subscription.startDate;
+            
+            $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Subscription';
+            openModal('addSubscriptionModal');
+        }
+
+        // Monthly Variables Management
+        function openAddVariableModal() {
+            const currentData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0, notes: '' };
+            
+            const form = $('addVariableForm');
+            form.budgetBuddy.value = currentData.budgetBuddyTotal;
+            form.otherExpenses.value = currentData.otherExpenses;
+            form.notes.value = currentData.notes || '';
+            
+            openModal('addVariableModal');
+        }
+
+        function saveVariable(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            financialData.monthlyVariables[financialData.currentMonth] = {
+                month: financialData.currentMonth,
+                budgetBuddyTotal: parseFloat(formData.get('budgetBuddy')),
+                otherExpenses: parseFloat(formData.get('otherExpenses')),
+                notes: formData.get('notes')
+            };
+            
+            financialData.save();
+            closeModal('addVariableModal');
+            renderVariablesTab();
+            updateDashboard();
+        }
+
+        function renderVariablesTab() {
+            const monthData = financialData.monthlyVariables[financialData.currentMonth] || { budgetBuddyTotal: 0, otherExpenses: 0 };
+            
+            $('monthlyBudgetBuddy').textContent = formatCurrency(monthData.budgetBuddyTotal);
+            $('monthlyOtherExpenses').textContent = formatCurrency(monthData.otherExpenses);
+            
+            // Render history
+            const historyContainer = $('variablesHistory');
+            const history = Object.entries(financialData.monthlyVariables)
+                .sort((a, b) => b[0].localeCompare(a[0]))
+                .slice(0, 12);
+            
+            if (history.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <div class="empty-state-text">No monthly data recorded yet</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const historyHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Budget Buddy</th>
+                            <th>Other Expenses</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${history.map(([month, data]) => {
+                            const [year, monthNum] = month.split('-');
+                            const date = new Date(year, monthNum - 1);
+                            const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                            const total = data.budgetBuddyTotal + data.otherExpenses;
+                            
+                            return `
+                                <tr>
+                                    <td>${monthName}</td>
+                                    <td class="amount">${formatCurrency(data.budgetBuddyTotal)}</td>
+                                    <td class="amount">${formatCurrency(data.otherExpenses)}</td>
+                                    <td class="amount negative">${formatCurrency(total)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            historyContainer.innerHTML = historyHtml;
+        }
+
+        // Analytics
+        function updateAnalytics() {
+            // Get last 6 months of data
+            const months = [];
+            const savingsData = [];
+            const currentDate = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+                const monthKey = date.toISOString().slice(0, 7);
+                const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+                
+                months.push(monthName);
+                
+                // Calculate savings for this month
+                const oldMonth = financialData.currentMonth;
+                financialData.currentMonth = monthKey;
+                const savings = financialData.getAvailableForSavings();
+                savingsData.push(Math.max(0, savings));
+                financialData.currentMonth = oldMonth;
+            }
+            
+            // Draw savings trend chart
+            drawLineChart('savingsTrendChart', months, savingsData, 'var(--primary-color)');
+            
+            // Calculate expense breakdown
+            const expenseBreakdown = {
+                'Fixed Expenses': financialData.expenses
+                    .filter(e => e.isActive)
+                    .reduce((sum, e) => sum + financialData.calculateMonthlyAmount(e), 0),
+                'Subscriptions': financialData.subscriptions
+                    .filter(s => s.isActive)
+                    .reduce((sum, s) => sum + financialData.calculateMonthlyAmount(s), 0),
+                'Budget Buddy': financialData.monthlyVariables[financialData.currentMonth]?.budgetBuddyTotal || 0,
+                'Other Variables': financialData.monthlyVariables[financialData.currentMonth]?.otherExpenses || 0
+            };
+            
+            const labels = Object.keys(expenseBreakdown);
+            const data = Object.values(expenseBreakdown);
+            const colors = ['#3b82f6', '#10b981', '#a855f7', '#f59e0b'];
+            
+            drawPieChart('expenseBreakdownChart', labels, data, colors);
+            
+            // Calculate YTD stats
+            let ytdIncome = 0;
+            let ytdExpenses = 0;
+            let ytdMonths = 0;
+            
+            const currentYear = new Date().getFullYear();
+            for (let month = 0; month <= currentDate.getMonth(); month++) {
+                const monthKey = `${currentYear}-${String(month + 1).padStart(2, '0')}`;
+                const oldMonth = financialData.currentMonth;
+                financialData.currentMonth = monthKey;
+                
+                ytdIncome += financialData.getMonthlyIncome();
+                ytdExpenses += financialData.getMonthlyExpenses();
+                ytdMonths++;
+                
+                financialData.currentMonth = oldMonth;
+            }
+            
+            const ytdSavings = ytdIncome - ytdExpenses;
+            const savingsRate = ytdIncome > 0 ? (ytdSavings / ytdIncome) * 100 : 0;
+            
+            $('ytdIncome').textContent = formatCurrency(ytdIncome);
+            $('ytdExpenses').textContent = formatCurrency(ytdExpenses);
+            $('ytdSavings').textContent = formatCurrency(ytdSavings);
+            $('ytdSavings').className = `quick-stat-value amount ${ytdSavings >= 0 ? 'positive' : 'negative'}`;
+            $('ytdSavingsRate').textContent = `${savingsRate.toFixed(1)}%`;
+        }
+
+        // Settings
+        function loadSettings() {
+            $('savingsGoal').value = financialData.settings.savingsGoal;
+            $('budgetBuddyLimit').value = financialData.settings.budgetBuddyLimit;
+        }
+
+        function saveSettings() {
+            financialData.settings.savingsGoal = parseFloat($('savingsGoal').value);
+            financialData.settings.budgetBuddyLimit = parseFloat($('budgetBuddyLimit').value);
+            financialData.save();
+            updateDashboard();
+            alert('Settings saved successfully!');
+        }
+
+        // Data Management
+        function exportData() {
+            const dataStr = JSON.stringify(financialData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `financial-data-${new Date().toISOString().slice(0, 10)}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    Object.assign(financialData, data);
+                    financialData.save();
+                    location.reload();
+                } catch (error) {
+                    alert('Error importing data. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function confirmClearData() {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                if (confirm('This will delete all your income, expenses, subscriptions, and monthly data. Are you absolutely sure?')) {
+                    localStorage.removeItem('financialData');
+                    location.reload();
+                }
+            }
+        }
+
+        // Utility Functions
+        function toggleItem(type, id) {
+            const array = financialData[type];
+            const item = array.find(i => i.id === id);
+            if (item) {
+                item.isActive = !item.isActive;
+                financialData.save();
+                
+                switch (type) {
+                    case 'income':
+                        renderIncomeList();
+                        break;
+                    case 'expenses':
+                        renderExpensesList();
+                        break;
+                    case 'subscriptions':
+                        renderSubscriptionsList();
+                        break;
+                }
+                
+                updateDashboard();
+            }
+        }
+
+        function deleteItem(type, id) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            const array = financialData[type];
+            const index = array.findIndex(i => i.id === id);
+            if (index !== -1) {
+                array.splice(index, 1);
+                financialData.save();
+                
+                switch (type) {
+                    case 'income':
+                        renderIncomeList();
+                        break;
+                    case 'expenses':
+                        renderExpensesList();
+                        break;
+                    case 'subscriptions':
+                        renderSubscriptionsList();
+                        break;
+                }
+                
+                updateDashboard();
+            }
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initNavigation();
+            initMonthNavigation();
+            updateDashboard();
+            
+            // Theme toggle
+            $('themeToggle').addEventListener('click', toggleTheme);
+            
+            // Close modals on background click
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal(modal.id);
+                    }
+                });
+            });
+            
+            // Set default dates for forms
+            const today = new Date().toISOString().slice(0, 10);
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.value = today;
+            });
+        });
+
+        // Auto-save reminder
+        window.addEventListener('beforeunload', () => {
+            financialData.save();
+        });
+    </script>
+</body>
+</html>
