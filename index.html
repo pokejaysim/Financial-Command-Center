@@ -853,6 +853,386 @@
             margin: 0;
         }
 
+        /* Category Styles */
+        .category-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .category-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            background-color: rgba(107, 114, 128, 0.1);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .category-badge.software {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .category-badge.streaming {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .category-badge.services {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .category-badge.utilities {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .category-badge.others {
+            background-color: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        /* Neo Credit Card Dashboard Styles */
+        .neo-dashboard {
+            margin-bottom: 2rem;
+        }
+
+        .neo-dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .neo-metric-card {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 50%, #C084FC 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.25);
+            transition: transform 0.2s;
+        }
+
+        .neo-metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .neo-metric-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+        }
+
+        .neo-metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Neo Controls */
+        .neo-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .neo-controls-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .neo-controls-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            background-color: var(--background);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            width: 250px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        .sort-dropdown {
+            padding: 0.75rem 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            background-color: var(--background);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-dropdown:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Blue Buttons */
+        .btn-blue {
+            background-color: #2563EB;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-blue:hover {
+            background-color: #1D4ED8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-blue-outline {
+            background-color: transparent;
+            color: #2563EB;
+            border: 1px solid #2563EB;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-blue-outline:hover {
+            background-color: #2563EB;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Neo Table */
+        .neo-table-container {
+            background: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .neo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .neo-table th {
+            background-color: var(--background);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .neo-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .neo-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .neo-table tr:hover {
+            background-color: var(--background);
+        }
+
+        .neo-item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .neo-amount {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        }
+
+        .neo-frequency {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .neo-monthly-cost {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        }
+
+        /* Category Tags */
+        .neo-category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .neo-category-tag.software {
+            background-color: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        .neo-category-tag.streaming {
+            background-color: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .neo-category-tag.services {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+
+        .neo-category-tag.utilities {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .neo-category-tag.others {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        /* Action Buttons */
+        .neo-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .neo-action-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .neo-action-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .neo-action-btn.edit:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .neo-action-btn.delete:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Empty State */
+        .neo-empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .neo-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .neo-empty-text {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .neo-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .neo-controls-left {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .neo-table {
+                font-size: 0.875rem;
+            }
+            
+            .neo-metric-value {
+                font-size: 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .calendar-day {
                 min-height: 80px;
@@ -1166,17 +1546,77 @@
                         <h2 class="section-title">Neo Credit Card</h2>
                         <p class="section-subtitle">Expenses from your Neo credit card</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddSubscriptionModal()">
-                        <span>+</span>
-                        <span>Add Subscription</span>
-                    </button>
                 </div>
 
-                <div class="card">
-                    <div id="subscriptionsList" class="empty-state">
-                        <div class="empty-state-icon">💳</div>
-                        <div class="empty-state-text">No Neo Credit Card expenses added yet</div>
-                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Expense</button>
+                <!-- Neo Dashboard -->
+                <div class="neo-dashboard">
+                    <div class="neo-dashboard-cards">
+                        <div class="neo-metric-card">
+                            <div class="neo-metric-label">Total Monthly</div>
+                            <div class="neo-metric-value" id="neoTotalMonthly">$0.00</div>
+                        </div>
+                        <div class="neo-metric-card">
+                            <div class="neo-metric-label">Total Annual</div>
+                            <div class="neo-metric-value" id="neoTotalAnnual">$0.00</div>
+                        </div>
+                        <div class="neo-metric-card">
+                            <div class="neo-metric-label">Active Subscriptions</div>
+                            <div class="neo-metric-value" id="neoActiveCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neo Controls -->
+                <div class="neo-controls">
+                    <div class="neo-controls-left">
+                        <div class="search-wrapper">
+                            <input type="text" id="neoSearch" placeholder="Search subscriptions..." class="search-input" oninput="filterNeoTable()">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <select id="neoSort" class="sort-dropdown" onchange="filterNeoTable()">
+                            <option value="name-asc">Name A-Z</option>
+                            <option value="name-desc">Name Z-A</option>
+                            <option value="amount-desc">Amount High-Low</option>
+                            <option value="amount-asc">Amount Low-High</option>
+                            <option value="category">Category</option>
+                        </select>
+                    </div>
+                    <div class="neo-controls-right">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="neoImportFile" accept=".json" onchange="importNeoItems(event)">
+                            <label for="neoImportFile" class="btn-blue-outline">
+                                <span>📅</span>
+                                <span>Import JSON</span>
+                            </label>
+                        </div>
+                        <button class="btn-blue" onclick="openAddSubscriptionModal()">
+                            <span>+</span>
+                            <span>Add Expense</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Neo Table -->
+                <div class="neo-table-container">
+                    <table class="neo-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Amount</th>
+                                <th>Frequency</th>
+                                <th>Category</th>
+                                <th>Monthly Cost</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="neoTableBody">
+                            <!-- Rows generated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div id="neoEmptyState" class="neo-empty-state" style="display: none;">
+                        <div class="neo-empty-icon">💳</div>
+                        <div class="neo-empty-text">No Neo Credit Card expenses found</div>
+                        <button class="btn-blue" onclick="openAddSubscriptionModal()">Add Your First Expense</button>
                     </div>
                 </div>
             </div>
@@ -1407,8 +1847,15 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" name="startDate" required>
+                    <label>Category</label>
+                    <select name="neoCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="software">💻 Software</option>
+                        <option value="streaming">📺 Streaming</option>
+                        <option value="services">🔧 Services</option>
+                        <option value="utilities">⚡ Utilities</option>
+                        <option value="others">📦 Others</option>
+                    </select>
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary">Save Expense</button>
@@ -1726,6 +2173,15 @@
         // Calendar state
         let calendarCurrentMonth = new Date().getMonth();
         let calendarCurrentYear = new Date().getFullYear();
+
+        // Neo Credit Card Categories
+        const NEO_CATEGORIES = {
+            'software': { name: 'Software', icon: '💻', color: '#3b82f6' },
+            'streaming': { name: 'Streaming', icon: '📺', color: '#10b981' },
+            'services': { name: 'Services', icon: '🔧', color: '#f59e0b' },
+            'utilities': { name: 'Utilities', icon: '⚡', color: '#ef4444' },
+            'others': { name: 'Others', icon: '📦', color: '#6b7280' }
+        };
 
         // UI Helper Functions
         function $(id) {
@@ -2496,7 +2952,8 @@
                 amount: parseFloat(formData.get('amount')),
                 frequency: formData.get('frequency'),
                 category: 'subscription',
-                startDate: formData.get('startDate'),
+                neoCategory: formData.get('neoCategory'),
+                startDate: new Date().toISOString().slice(0, 10), // Default to today since no start date field
                 isActive: true
             };
             
@@ -2516,38 +2973,100 @@
         }
 
         function renderSubscriptionsList() {
-            const container = $('subscriptionsList');
+            updateNeoDashboard();
+            filterNeoTable();
+        }
+
+        function updateNeoDashboard() {
+            const activeSubscriptions = financialData.subscriptions.filter(s => s.isActive);
+            const totalMonthly = activeSubscriptions.reduce((sum, sub) => 
+                sum + financialData.calculateMonthlyAmount(sub), 0);
             
-            if (financialData.subscriptions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📺</div>
-                        <div class="empty-state-text">No Neo Credit Card expenses added yet</div>
-                        <button class="btn btn-primary" onclick="openAddSubscriptionModal()">Add Your First Subscription</button>
-                    </div>
-                `;
+            $('neoTotalMonthly').textContent = formatCurrency(totalMonthly);
+            $('neoTotalAnnual').textContent = formatCurrency(totalMonthly * 12);
+            $('neoActiveCount').textContent = activeSubscriptions.length;
+        }
+
+        function filterNeoTable() {
+            const searchTerm = $('neoSearch').value.toLowerCase();
+            const sortBy = $('neoSort').value;
+            const tableBody = $('neoTableBody');
+            const emptyState = $('neoEmptyState');
+            
+            // Filter active subscriptions
+            let filteredItems = financialData.subscriptions.filter(sub => 
+                sub.isActive && sub.name.toLowerCase().includes(searchTerm)
+            );
+            
+            // Sort items
+            filteredItems.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name-asc':
+                        return a.name.localeCompare(b.name);
+                    case 'name-desc':
+                        return b.name.localeCompare(a.name);
+                    case 'amount-desc':
+                        return b.amount - a.amount;
+                    case 'amount-asc':
+                        return a.amount - b.amount;
+                    case 'category':
+                        const categoryA = (a.neoCategory || 'others');
+                        const categoryB = (b.neoCategory || 'others');
+                        if (categoryA === categoryB) {
+                            return a.name.localeCompare(b.name);
+                        }
+                        return categoryA.localeCompare(categoryB);
+                    default:
+                        return 0;
+                }
+            });
+            
+            if (filteredItems.length === 0) {
+                tableBody.style.display = 'none';
+                emptyState.style.display = 'block';
                 return;
             }
             
-            const subscriptionsHtml = financialData.subscriptions.map(item => `
-                <div class="list-item">
-                    <div class="list-item-info">
-                        <div class="list-item-title">${item.name}</div>
-                        <div class="list-item-details">
-                            <span class="amount negative">${formatCurrency(item.amount)}</span>
-                            <span class="frequency-badge">${item.frequency}</span>
-                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
-                        </div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="icon-btn" onclick="editSubscription('${item.id}')">✏️</button>
-                        <button class="icon-btn" onclick="toggleItem('subscriptions', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
-                        <button class="icon-btn" onclick="deleteItem('subscriptions', '${item.id}')">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+            tableBody.style.display = '';
+            emptyState.style.display = 'none';
             
-            container.innerHTML = subscriptionsHtml;
+            // Render table rows
+            const rowsHtml = filteredItems.map(item => {
+                const categoryInfo = getCategoryInfo(item.neoCategory || 'others');
+                const monthlyAmount = financialData.calculateMonthlyAmount(item);
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="neo-item-name">${item.name}</div>
+                        </td>
+                        <td>
+                            <div class="neo-amount">${formatCurrency(item.amount)}</div>
+                        </td>
+                        <td>
+                            <div class="neo-frequency">${item.frequency}</div>
+                        </td>
+                        <td>
+                            <span class="neo-category-tag ${item.neoCategory || 'others'}">${categoryInfo.name}</span>
+                        </td>
+                        <td>
+                            <div class="neo-monthly-cost">${formatCurrency(monthlyAmount)}</div>
+                        </td>
+                        <td>
+                            <div class="neo-actions">
+                                <button class="neo-action-btn edit" onclick="editSubscription('${item.id}')" title="Edit">
+                                    <span>✏️</span>
+                                </button>
+                                <button class="neo-action-btn delete" onclick="deleteItem('subscriptions', '${item.id}')" title="Delete">
+                                    <span>🗑️</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tableBody.innerHTML = rowsHtml;
         }
 
         function editSubscription(id) {
@@ -2559,10 +3078,146 @@
             form.name.value = subscription.name;
             form.amount.value = subscription.amount;
             form.frequency.value = subscription.frequency;
-            form.startDate.value = subscription.startDate;
+            form.neoCategory.value = subscription.neoCategory || 'others';
             
             $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Neo Credit Card Expense';
             openModal('addSubscriptionModal');
+        }
+
+        // Neo Credit Card JSON Import Functions
+        function importNeoItems(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const items = Array.isArray(data) ? data : (data.neoItems || data.items || []);
+                    
+                    if (!Array.isArray(items)) {
+                        throw new Error('Expected an array of items or an object with neoItems/items property');
+                    }
+                    
+                    let imported = 0;
+                    let skipped = 0;
+                    
+                    items.forEach(item => {
+                        if (validateNeoItem(item)) {
+                            const subscription = {
+                                id: generateId(),
+                                name: item.name.trim(),
+                                amount: parseFloat(item.amount),
+                                frequency: item.frequency || 'monthly',
+                                category: 'subscription',
+                                neoCategory: item.category || item.neoCategory || 'others',
+                                startDate: new Date().toISOString().slice(0, 10),
+                                isActive: true
+                            };
+                            financialData.subscriptions.push(subscription);
+                            imported++;
+                        } else {
+                            skipped++;
+                        }
+                    });
+                    
+                    if (imported > 0) {
+                        financialData.save();
+                        renderSubscriptionsList();
+                        updateDashboard();
+                    }
+                    
+                    let message = `Successfully imported ${imported} Neo Credit Card item${imported !== 1 ? 's' : ''}!`;
+                    if (skipped > 0) {
+                        message += ` (${skipped} item${skipped !== 1 ? 's' : ''} skipped due to invalid format)`;
+                    }
+                    
+                    alert(message);
+                    
+                } catch (error) {
+                    console.error('JSON Import Error:', error);
+                    alert('Error importing JSON: Invalid file format. Please check that your JSON contains an array of items with name, amount, and frequency fields.');
+                }
+                
+                // Clear the file input for next use
+                event.target.value = '';
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+                event.target.value = '';
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function validateNeoItem(item) {
+            // Check if item exists and has required properties
+            if (!item || typeof item !== 'object') {
+                return false;
+            }
+            
+            // Validate name
+            if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') {
+                return false;
+            }
+            
+            // Validate amount
+            const amount = parseFloat(item.amount);
+            if (isNaN(amount) || amount <= 0) {
+                return false;
+            }
+            
+            // Validate frequency (optional, defaults to monthly)
+            const validFrequencies = ['weekly', 'biweekly', 'monthly', 'annual'];
+            const frequency = item.frequency || 'monthly';
+            if (!validFrequencies.includes(frequency)) {
+                return false;
+            }
+            
+            // Validate category (optional, defaults to others)
+            const validCategories = Object.keys(NEO_CATEGORIES);
+            const category = item.category || item.neoCategory || 'others';
+            if (!validCategories.includes(category)) {
+                // Invalid category is not a failure, we'll default to 'others'
+                // Just log it for debugging
+                console.warn(`Invalid category '${category}' for item '${item.name}', defaulting to 'others'`);
+            }
+            
+            return true;
+        }
+
+        // Category Helper Functions
+        function getCategoryInfo(categoryKey) {
+            return NEO_CATEGORIES[categoryKey] || NEO_CATEGORIES.others;
+        }
+
+        function groupSubscriptionsByCategory(subscriptions) {
+            const groups = {};
+            
+            // Initialize all categories
+            Object.keys(NEO_CATEGORIES).forEach(key => {
+                groups[key] = [];
+            });
+            
+            // Group subscriptions by category
+            subscriptions.forEach(sub => {
+                const category = sub.neoCategory || 'others';
+                if (groups[category]) {
+                    groups[category].push(sub);
+                } else {
+                    groups.others.push(sub); // Fallback for invalid categories
+                }
+            });
+            
+            // Remove empty categories
+            Object.keys(groups).forEach(key => {
+                if (groups[key].length === 0) {
+                    delete groups[key];
+                }
+            });
+            
+            return groups;
         }
 
         // Monthly Variables Management
