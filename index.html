@@ -703,6 +703,13 @@
             color: var(--text-secondary);
         }
 
+        .payment-schedule {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
         /* Toggle Switch */
         .toggle-switch {
             position: relative;
@@ -1175,6 +1182,11 @@
                     <label>Start Date</label>
                     <input type="date" name="startDate" required>
                 </div>
+                <div class="form-group">
+                    <label>Payment Day (for monthly payments)</label>
+                    <input type="number" name="paymentDay" min="1" max="31" placeholder="15">
+                    <small class="text-secondary">Day of month for monthly payments (e.g., 15 for 15th of each month). Leave blank for other frequencies.</small>
+                </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary">Save Expense</button>
                     <button type="button" class="btn btn-secondary" onclick="closeModal('addExpenseModal')">Cancel</button>
@@ -1539,6 +1551,90 @@
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
+        // Payment Schedule Formatting Functions
+        function formatPaymentSchedule(expense) {
+            if (!expense.frequency) return '';
+            
+            const startDate = new Date(expense.startDate);
+            const dayOfWeek = startDate.toLocaleDateString('en-US', { weekday: 'long' });
+            const monthDay = startDate.getDate();
+            
+            switch (expense.frequency) {
+                case 'weekly':
+                    return `Weekly on ${dayOfWeek}s`;
+                case 'biweekly':
+                    return `Bi-weekly starting ${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                case 'monthly':
+                    const paymentDay = expense.paymentDay || monthDay;
+                    return `Monthly on the ${getOrdinalSuffix(paymentDay)}`;
+                case 'annual':
+                    return `Annual on ${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                default:
+                    return expense.frequency;
+            }
+        }
+
+        function getOrdinalSuffix(day) {
+            if (day >= 11 && day <= 13) {
+                return day + 'th';
+            }
+            switch (day % 10) {
+                case 1: return day + 'st';
+                case 2: return day + 'nd';
+                case 3: return day + 'rd';
+                default: return day + 'th';
+            }
+        }
+
+        function getNextPaymentDate(expense) {
+            if (!expense.frequency || !expense.startDate) return null;
+            
+            const today = new Date();
+            const startDate = new Date(expense.startDate);
+            let nextDate = new Date(startDate);
+            
+            switch (expense.frequency) {
+                case 'weekly':
+                    // Find next occurrence of the same day of week
+                    const daysDiff = (startDate.getDay() - today.getDay() + 7) % 7;
+                    nextDate = new Date(today);
+                    nextDate.setDate(today.getDate() + (daysDiff === 0 ? 7 : daysDiff));
+                    break;
+                    
+                case 'biweekly':
+                    // Calculate next biweekly payment
+                    const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+                    const cyclesSinceStart = Math.floor(daysSinceStart / 14);
+                    nextDate = new Date(startDate);
+                    nextDate.setDate(startDate.getDate() + (cyclesSinceStart + 1) * 14);
+                    break;
+                    
+                case 'monthly':
+                    const paymentDay = expense.paymentDay || startDate.getDate();
+                    nextDate = new Date(today.getFullYear(), today.getMonth(), paymentDay);
+                    if (nextDate <= today) {
+                        nextDate.setMonth(nextDate.getMonth() + 1);
+                    }
+                    // Handle months with fewer days
+                    if (nextDate.getDate() !== paymentDay) {
+                        nextDate = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0); // Last day of month
+                    }
+                    break;
+                    
+                case 'annual':
+                    nextDate = new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    if (nextDate <= today) {
+                        nextDate.setFullYear(nextDate.getFullYear() + 1);
+                    }
+                    break;
+                    
+                default:
+                    return null;
+            }
+            
+            return nextDate;
+        }
+
         // Theme Management
         function initTheme() {
             const theme = localStorage.getItem('theme') || 'light';
@@ -1894,6 +1990,7 @@
                 frequency: formData.get('frequency'),
                 category: 'fixed_expense',
                 startDate: formData.get('startDate'),
+                paymentDay: formData.get('paymentDay') ? parseInt(formData.get('paymentDay')) : null,
                 isActive: true
             };
             
@@ -1926,23 +2023,34 @@
                 return;
             }
             
-            const expensesHtml = financialData.expenses.map(item => `
-                <div class="list-item">
-                    <div class="list-item-info">
-                        <div class="list-item-title">${item.name}</div>
-                        <div class="list-item-details">
-                            <span class="amount negative">${formatCurrency(item.amount)}</span>
-                            <span class="frequency-badge">${item.frequency}</span>
-                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+            const expensesHtml = financialData.expenses.map(item => {
+                const paymentSchedule = formatPaymentSchedule(item);
+                const nextPayment = getNextPaymentDate(item);
+                const nextPaymentText = nextPayment ? `Next: ${nextPayment.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '';
+                
+                return `
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <div class="list-item-title">${item.name}</div>
+                            <div class="list-item-details">
+                                <span class="amount negative">${formatCurrency(item.amount)}</span>
+                                <span class="frequency-badge">${item.frequency}</span>
+                                <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                            </div>
+                            ${paymentSchedule ? `
+                                <div class="payment-schedule">
+                                    <span class="text-secondary">📅 ${paymentSchedule}${nextPaymentText ? ` | ${nextPaymentText}` : ''}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="action-buttons">
+                            <button class="icon-btn" onclick="editExpense('${item.id}')">✏️</button>
+                            <button class="icon-btn" onclick="toggleItem('expenses', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                            <button class="icon-btn" onclick="deleteItem('expenses', '${item.id}')">🗑️</button>
                         </div>
                     </div>
-                    <div class="action-buttons">
-                        <button class="icon-btn" onclick="editExpense('${item.id}')">✏️</button>
-                        <button class="icon-btn" onclick="toggleItem('expenses', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
-                        <button class="icon-btn" onclick="deleteItem('expenses', '${item.id}')">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             container.innerHTML = expensesHtml;
         }
@@ -1957,6 +2065,7 @@
             form.amount.value = expense.amount;
             form.frequency.value = expense.frequency;
             form.startDate.value = expense.startDate;
+            form.paymentDay.value = expense.paymentDay || '';
             
             $('addExpenseModal').querySelector('.modal-title').textContent = 'Edit Coast Capital Expense';
             openModal('addExpenseModal');
