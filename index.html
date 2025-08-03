@@ -3093,33 +3093,58 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    const items = Array.isArray(data) ? data : (data.neoItems || data.items || []);
+                    console.log('Parsed JSON data:', data);
                     
-                    if (!Array.isArray(items)) {
-                        throw new Error('Expected an array of items or an object with neoItems/items property');
+                    // Support multiple JSON structures
+                    let items = [];
+                    if (Array.isArray(data)) {
+                        items = data;
+                    } else if (data.expenses && Array.isArray(data.expenses)) {
+                        items = data.expenses;
+                        console.log('Found expenses array with', items.length, 'items');
+                    } else if (data.neoItems && Array.isArray(data.neoItems)) {
+                        items = data.neoItems;
+                    } else if (data.items && Array.isArray(data.items)) {
+                        items = data.items;
+                    }
+                    
+                    console.log('Items to process:', items.length);
+                    
+                    if (!Array.isArray(items) || items.length === 0) {
+                        throw new Error('No valid expense items found. Expected "expenses" array or direct array of items.');
                     }
                     
                     let imported = 0;
                     let skipped = 0;
                     
-                    items.forEach(item => {
+                    items.forEach((item, index) => {
+                        console.log(`Processing item ${index + 1}:`, item);
+                        
                         if (validateNeoItem(item)) {
+                            // Map category names
+                            let mappedCategory = item.category || item.neoCategory || 'others';
+                            if (mappedCategory === 'other') mappedCategory = 'others'; // Fix category mapping
+                            
                             const subscription = {
                                 id: generateId(),
                                 name: item.name.trim(),
                                 amount: parseFloat(item.amount),
                                 frequency: item.frequency || 'monthly',
                                 category: 'subscription',
-                                neoCategory: item.category || item.neoCategory || 'others',
+                                neoCategory: mappedCategory,
                                 startDate: new Date().toISOString().slice(0, 10),
                                 isActive: true
                             };
                             financialData.subscriptions.push(subscription);
                             imported++;
+                            console.log(`✅ Imported: ${item.name}`);
                         } else {
                             skipped++;
+                            console.log(`❌ Skipped: ${item.name || 'Unknown'} - validation failed`);
                         }
                     });
+                    
+                    console.log(`Import complete: ${imported} imported, ${skipped} skipped`);
                     
                     if (imported > 0) {
                         financialData.save();
@@ -3127,16 +3152,20 @@
                         updateDashboard();
                     }
                     
-                    let message = `Successfully imported ${imported} Neo Credit Card item${imported !== 1 ? 's' : ''}!`;
+                    let message = `Successfully imported ${imported} Neo Credit Card expense${imported !== 1 ? 's' : ''}!`;
                     if (skipped > 0) {
-                        message += ` (${skipped} item${skipped !== 1 ? 's' : ''} skipped due to invalid format)`;
+                        message += `\n(${skipped} item${skipped !== 1 ? 's' : ''} skipped - check console for details)`;
+                    }
+                    
+                    if (imported === 0 && skipped > 0) {
+                        message = `No items imported. ${skipped} item${skipped !== 1 ? 's' : ''} failed validation. Check console for details.`;
                     }
                     
                     alert(message);
                     
                 } catch (error) {
                     console.error('JSON Import Error:', error);
-                    alert('Error importing JSON: Invalid file format. Please check that your JSON contains an array of items with name, amount, and frequency fields.');
+                    alert(`Error importing JSON: ${error.message}\n\nPlease check that your JSON contains an "expenses" array with valid expense objects.`);
                 }
                 
                 // Clear the file input for next use
@@ -3152,38 +3181,46 @@
         }
 
         function validateNeoItem(item) {
+            console.log('Validating item:', item);
+            
             // Check if item exists and has required properties
             if (!item || typeof item !== 'object') {
+                console.log('Validation failed: item is not an object');
                 return false;
             }
             
             // Validate name
             if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') {
+                console.log('Validation failed: invalid name -', item.name);
                 return false;
             }
             
             // Validate amount
             const amount = parseFloat(item.amount);
             if (isNaN(amount) || amount <= 0) {
+                console.log('Validation failed: invalid amount -', item.amount, 'parsed as:', amount);
                 return false;
             }
             
             // Validate frequency (optional, defaults to monthly)
             const validFrequencies = ['weekly', 'biweekly', 'monthly', 'annual'];
             const frequency = item.frequency || 'monthly';
-            if (!validFrequencies.includes(frequency)) {
+            if (!validFrequencies.includes(frequency.toLowerCase())) {
+                console.log('Validation failed: invalid frequency -', item.frequency);
                 return false;
             }
             
             // Validate category (optional, defaults to others)
-            const validCategories = Object.keys(NEO_CATEGORIES);
-            const category = item.category || item.neoCategory || 'others';
-            if (!validCategories.includes(category)) {
-                // Invalid category is not a failure, we'll default to 'others'
-                // Just log it for debugging
-                console.warn(`Invalid category '${category}' for item '${item.name}', defaulting to 'others'`);
+            const validCategories = [...Object.keys(NEO_CATEGORIES), 'other']; // Include 'other' for mapping
+            let category = item.category || item.neoCategory || 'others';
+            if (category === 'other') category = 'others'; // Map 'other' to 'others'
+            
+            if (!Object.keys(NEO_CATEGORIES).includes(category)) {
+                console.warn(`Invalid category '${item.category}' for item '${item.name}', will default to 'others'`);
+                // Don't fail validation, just warn
             }
             
+            console.log('✅ Validation passed for:', item.name);
             return true;
         }
 
