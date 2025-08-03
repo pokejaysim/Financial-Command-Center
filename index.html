@@ -1876,20 +1876,28 @@
             const monthStart = new Date(year, month, 1);
             const monthEnd = new Date(year, month + 1, 0);
             
-            // Calculate all biweekly occurrences from start date
-            let current = new Date(startDate);
+            // Calculate days since start date to find the biweekly cycle
+            const daysSinceStart = Math.floor((monthStart - startDate) / (1000 * 60 * 60 * 24));
             
-            // Go backwards to find occurrences before the target month
-            while (current > monthStart) {
-                current.setDate(current.getDate() - 14);
-            }
+            // Find the first occurrence in or after the target month
+            let cycleOffset = daysSinceStart >= 0 ? Math.ceil(daysSinceStart / 14) : 0;
             
-            // Go forward to find occurrences in the target month
-            while (current <= monthEnd) {
-                if (current >= monthStart && current >= startDate) {
-                    occurrences.push(new Date(current));
+            // Generate all biweekly occurrences that fall within the target month
+            while (true) {
+                const occurrenceDate = new Date(startDate);
+                occurrenceDate.setDate(startDate.getDate() + (cycleOffset * 14));
+                
+                // If we've passed the end of the month, stop
+                if (occurrenceDate > monthEnd) {
+                    break;
                 }
-                current.setDate(current.getDate() + 14);
+                
+                // If this occurrence is within the target month and after/on start date, add it
+                if (occurrenceDate >= monthStart && occurrenceDate >= startDate) {
+                    occurrences.push(new Date(occurrenceDate));
+                }
+                
+                cycleOffset++;
             }
             
             return occurrences;
