@@ -1127,6 +1127,29 @@
             font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
         }
 
+        .neo-end-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .neo-end-date.ongoing {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .neo-end-date.expiring-soon {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .expiring-soon-row {
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .expiring-soon-row:hover {
+            background-color: rgba(245, 158, 11, 0.15);
+        }
+
         /* Category Tags */
         .neo-category-tag {
             display: inline-block;
@@ -1971,6 +1994,7 @@
                                 <th>Amount</th>
                                 <th>Frequency</th>
                                 <th>Category</th>
+                                <th>End Date</th>
                                 <th>Monthly Cost</th>
                                 <th>Actions</th>
                             </tr>
@@ -2436,6 +2460,11 @@
                         <option value="others">📦 Others</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>End Date (Optional)</label>
+                    <input type="date" name="endDate" placeholder="Leave blank for ongoing" min="">
+                    <small class="text-secondary">Payment will be automatically removed after this date. Leave blank for ongoing payments.</small>
+                </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary">Save Expense</button>
                     <button type="button" class="btn btn-secondary" onclick="closeModal('addSubscriptionModal')">Cancel</button>
@@ -2763,6 +2792,48 @@
                 style: 'currency',
                 currency: 'USD'
             }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function cleanupExpiredSubscriptions() {
+            const today = new Date().toISOString().slice(0, 10);
+            const originalCount = financialData.subscriptions.length;
+            const expiredItems = [];
+            
+            financialData.subscriptions = financialData.subscriptions.filter(sub => {
+                if (sub.endDate && sub.endDate <= today) {
+                    expiredItems.push(sub);
+                    return false;
+                }
+                return true;
+            });
+            
+            if (expiredItems.length > 0) {
+                console.log(`Cleaned up ${expiredItems.length} expired subscription(s):`, expiredItems);
+                financialData.save();
+                updateDashboard();
+                renderSubscriptionsList();
+                
+                // Show subtle notification
+                if (expiredItems.length === 1) {
+                    console.log(`✓ Removed expired payment: ${expiredItems[0].name}`);
+                } else {
+                    console.log(`✓ Removed ${expiredItems.length} expired payments`);
+                }
+                
+                return expiredItems.length;
+            }
+            
+            return 0;
         }
 
         function generateId() {
@@ -3117,6 +3188,7 @@
                         renderExpensesList();
                         break;
                     case 'subscriptions':
+                        cleanupExpiredSubscriptions();
                         renderSubscriptionsList();
                         break;
                     case 'notes':
@@ -3513,6 +3585,11 @@
             $('addSubscriptionForm').reset();
             $('addSubscriptionForm').dataset.editId = '';
             $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Add Neo Credit Card Expense';
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().slice(0, 10);
+            $('addSubscriptionForm').endDate.min = today;
+            
             openModal('addSubscriptionModal');
         }
 
@@ -3529,6 +3606,7 @@
                 category: 'subscription',
                 neoCategory: formData.get('neoCategory'),
                 startDate: new Date().toISOString().slice(0, 10), // Default to today since no start date field
+                endDate: formData.get('endDate') || null,
                 isActive: true
             };
             
@@ -3610,8 +3688,18 @@
                 const categoryInfo = getCategoryInfo(item.neoCategory || 'others');
                 const monthlyAmount = financialData.calculateMonthlyAmount(item);
                 
+                // Check if payment is ending soon (within 30 days)
+                const today = new Date();
+                const thirtyDaysFromNow = new Date();
+                thirtyDaysFromNow.setDate(today.getDate() + 30);
+                const isExpiringSoon = item.endDate && new Date(item.endDate) <= thirtyDaysFromNow && new Date(item.endDate) > today;
+                
+                const endDateDisplay = item.endDate ? 
+                    `<div class="neo-end-date ${isExpiringSoon ? 'expiring-soon' : ''}">${formatDate(item.endDate)} ⏰</div>` : 
+                    `<div class="neo-end-date ongoing">Ongoing</div>`;
+                
                 return `
-                    <tr>
+                    <tr ${isExpiringSoon ? 'class="expiring-soon-row"' : ''}>
                         <td>
                             <div class="neo-item-name">${item.name}</div>
                         </td>
@@ -3623,6 +3711,9 @@
                         </td>
                         <td>
                             <span class="neo-category-tag ${item.neoCategory || 'others'}">${categoryInfo.name}</span>
+                        </td>
+                        <td>
+                            ${endDateDisplay}
                         </td>
                         <td>
                             <div class="neo-monthly-cost">${formatCurrency(monthlyAmount)}</div>
@@ -3654,6 +3745,11 @@
             form.amount.value = subscription.amount;
             form.frequency.value = subscription.frequency;
             form.neoCategory.value = subscription.neoCategory || 'others';
+            form.endDate.value = subscription.endDate || '';
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().slice(0, 10);
+            form.endDate.min = today;
             
             $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Neo Credit Card Expense';
             openModal('addSubscriptionModal');
@@ -4082,6 +4178,7 @@
                         renderExpensesList();
                         break;
                     case 'subscriptions':
+                        cleanupExpiredSubscriptions();
                         renderSubscriptionsList();
                         break;
                 }
@@ -4110,6 +4207,7 @@
                         renderExpensesList();
                         break;
                     case 'subscriptions':
+                        cleanupExpiredSubscriptions();
                         renderSubscriptionsList();
                         break;
                 }
@@ -4513,6 +4611,7 @@
             initTheme();
             initNavigation();
             initMonthNavigation();
+            cleanupExpiredSubscriptions();
             updateDashboard();
             renderCalendar();
             
