@@ -1713,6 +1713,162 @@
                 padding-top: 15px;
             }
         }
+
+        /* Reimbursements Styles */
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--card-background);
+            color: var(--text-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .reimbursements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reimbursement-item {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .reimbursement-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .reimbursement-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .reimbursement-info {
+            flex: 1;
+        }
+
+        .reimbursement-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .reimbursement-details {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .reimbursement-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .reimbursement-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-submitted {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-received {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .reimbursement-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .section-controls {
+            margin-bottom: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .reimbursement-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .reimbursement-actions {
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1742,6 +1898,7 @@
             <button class="nav-tab" data-tab="expenses">Coast Capital Account</button>
             <button class="nav-tab" data-tab="subscriptions">Neo Credit Card</button>
             <button class="nav-tab" data-tab="notes">Notes</button>
+            <button class="nav-tab" data-tab="reimbursements">Reimbursements</button>
             <button class="nav-tab" data-tab="networth">Financial Statement</button>
             <button class="nav-tab" data-tab="analytics">Analytics</button>
             <button class="nav-tab" data-tab="settings">Settings</button>
@@ -1826,6 +1983,10 @@
                         <div class="quick-stat">
                             <div class="quick-stat-value" id="totalBudgetBuddyItems">0</div>
                             <div class="quick-stat-label">Budget Buddy Items</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-value" id="pendingReimbursements">$0</div>
+                            <div class="quick-stat-label">Pending Reimbursements</div>
                         </div>
                     </div>
                 </div>
@@ -2204,6 +2365,66 @@
                     <div id="liabilitiesList"></div>
                 </div>
             </div>
+
+            <!-- Reimbursements Tab -->
+            <div id="reimbursements" class="tab-content">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Reimbursements</h2>
+                        <p class="section-subtitle">Track therapy session reimbursements from insurance</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddReimbursementModal()">
+                        <span class="icon">+</span>
+                        Add Session
+                    </button>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Outstanding Amount</h3>
+                            <span class="icon">💰</span>
+                        </div>
+                        <div class="card-value" id="outstandingAmount">$0.00</div>
+                        <div class="card-subtitle">Pending reimbursement</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Overdue Claims</h3>
+                            <span class="icon">⚠️</span>
+                        </div>
+                        <div class="card-value" id="overdueClaims">0</div>
+                        <div class="card-subtitle">Past expected date</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>This Month</h3>
+                            <span class="icon">📅</span>
+                        </div>
+                        <div class="card-value" id="monthlySessionsCount">0</div>
+                        <div class="card-subtitle">Sessions submitted</div>
+                    </div>
+                </div>
+
+                <!-- Filter and Actions -->
+                <div class="section-controls">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="submitted">Submitted</button>
+                        <button class="filter-btn" data-filter="received">Received</button>
+                        <button class="filter-btn" data-filter="overdue">Overdue</button>
+                    </div>
+                </div>
+
+                <!-- Reimbursements List -->
+                <div class="list-container">
+                    <div id="reimbursementsList" class="reimbursements-list">
+                        <!-- Reimbursements will be rendered here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -2510,6 +2731,94 @@
         </div>
     </div>
 
+    <!-- Add Reimbursement Modal -->
+    <div id="addReimbursementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Therapy Session</h2>
+                <button class="modal-close" onclick="closeModal('addReimbursementModal')">&times;</button>
+            </div>
+            <form onsubmit="saveReimbursement(event)">
+                <div class="form-group">
+                    <label for="reimbursementProvider">Provider Name</label>
+                    <input type="text" id="reimbursementProvider" name="provider" placeholder="Dr. Smith" required>
+                </div>
+                <div class="form-group">
+                    <label for="reimbursementAmount">Session Amount</label>
+                    <input type="number" id="reimbursementAmount" name="amount" step="0.01" placeholder="150.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="reimbursementSessionDate">Session Date</label>
+                    <input type="date" id="reimbursementSessionDate" name="sessionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="reimbursementSubmittedDate">Date Submitted to Insurance</label>
+                    <input type="date" id="reimbursementSubmittedDate" name="submittedDate">
+                    <small>Leave blank if not yet submitted</small>
+                </div>
+                <div class="form-group">
+                    <label for="reimbursementExpectedDate">Expected Reimbursement Date</label>
+                    <input type="date" id="reimbursementExpectedDate" name="expectedDate">
+                    <small>Estimated date for receiving reimbursement</small>
+                </div>
+                <div class="form-group">
+                    <label for="reimbursementNotes">Notes (Optional)</label>
+                    <textarea id="reimbursementNotes" name="notes" rows="3" placeholder="Additional details about the session or claim"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Add Session</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addReimbursementModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Reimbursement Modal -->
+    <div id="editReimbursementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Therapy Session</h2>
+                <button class="modal-close" onclick="closeModal('editReimbursementModal')">&times;</button>
+            </div>
+            <form onsubmit="updateReimbursement(event)">
+                <input type="hidden" id="editReimbursementId" name="editReimbursementId">
+                <div class="form-group">
+                    <label for="editReimbursementProvider">Provider Name</label>
+                    <input type="text" id="editReimbursementProvider" name="provider" required>
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementAmount">Session Amount</label>
+                    <input type="number" id="editReimbursementAmount" name="amount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementSessionDate">Session Date</label>
+                    <input type="date" id="editReimbursementSessionDate" name="sessionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementSubmittedDate">Date Submitted to Insurance</label>
+                    <input type="date" id="editReimbursementSubmittedDate" name="submittedDate">
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementExpectedDate">Expected Reimbursement Date</label>
+                    <input type="date" id="editReimbursementExpectedDate" name="expectedDate">
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementReceivedDate">Date Received</label>
+                    <input type="date" id="editReimbursementReceivedDate" name="receivedDate">
+                    <small>Date you actually received the reimbursement</small>
+                </div>
+                <div class="form-group">
+                    <label for="editReimbursementNotes">Notes (Optional)</label>
+                    <textarea id="editReimbursementNotes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Update Session</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editReimbursementModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Chart.js Library (Minimal Implementation) -->
     <script>
@@ -2666,6 +2975,7 @@
                 this.notes = []; // New notes array
                 this.assets = []; // Financial statement assets
                 this.liabilities = []; // Financial statement liabilities
+                this.reimbursements = []; // Therapy session reimbursements
                 this.settings = {
                     savingsGoal: 700,
                     theme: 'light'
@@ -2707,6 +3017,10 @@
                     }
                     if (!this.liabilities) {
                         this.liabilities = [];
+                    }
+                    // Ensure reimbursements array exists for backwards compatibility
+                    if (!this.reimbursements) {
+                        this.reimbursements = [];
                     }
                     // Remove old budgetBuddyLimit from settings
                     if (this.settings && this.settings.budgetBuddyLimit !== undefined) {
@@ -3194,6 +3508,10 @@
                     case 'notes':
                         renderNotesList();
                         break;
+                    case 'reimbursements':
+                        renderReimbursementsList();
+                        updateReimbursementsSummary();
+                        break;
                     case 'networth':
                         renderNetWorthDashboard();
                         renderAssetsList();
@@ -3283,6 +3601,12 @@
             $('totalBudgetBuddyItems').textContent = financialData.budgetBuddy.filter(i => i.isActive).length;
             $('totalExpenseItems').textContent = financialData.expenses.filter(i => i.isActive).length;
             $('totalSubscriptions').textContent = financialData.subscriptions.filter(i => i.isActive).length;
+            
+            // Update reimbursements quick stat
+            const pendingAmount = financialData.reimbursements
+                .filter(r => !r.receivedDate)
+                .reduce((sum, r) => sum + r.amount, 0);
+            $('pendingReimbursements').textContent = formatCurrency(pendingAmount);
         }
 
         // Modal Functions
@@ -4631,6 +4955,238 @@
             const today = new Date().toISOString().slice(0, 10);
             document.querySelectorAll('input[type="date"]').forEach(input => {
                 input.value = today;
+            });
+        });
+
+        // Reimbursement Functions
+        function showAddReimbursementModal() {
+            document.getElementById('addReimbursementModal').style.display = 'block';
+            // Set default date to today
+            document.getElementById('reimbursementSessionDate').value = new Date().toISOString().slice(0, 10);
+        }
+
+        function saveReimbursement(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const reimbursement = {
+                id: Date.now(),
+                provider: formData.get('provider'),
+                amount: parseFloat(formData.get('amount')),
+                sessionDate: formData.get('sessionDate'),
+                submittedDate: formData.get('submittedDate') || null,
+                expectedDate: formData.get('expectedDate') || null,
+                receivedDate: null,
+                notes: formData.get('notes') || '',
+                status: formData.get('submittedDate') ? 'submitted' : 'pending'
+            };
+            
+            financialData.reimbursements.push(reimbursement);
+            financialData.save();
+            renderReimbursementsList();
+            updateReimbursementsSummary();
+            closeModal('addReimbursementModal');
+            event.target.reset();
+        }
+
+        function renderReimbursementsList() {
+            const container = document.getElementById('reimbursementsList');
+            if (!container) return;
+            
+            const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+            let reimbursements = [...financialData.reimbursements];
+            
+            // Apply filter
+            if (activeFilter !== 'all') {
+                reimbursements = reimbursements.filter(r => {
+                    const status = getReimbursementStatus(r);
+                    return status === activeFilter;
+                });
+            }
+            
+            // Sort by session date (newest first)
+            reimbursements.sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
+            
+            if (reimbursements.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🏥</div>
+                        <h3>No reimbursements ${activeFilter !== 'all' ? 'matching filter' : 'yet'}</h3>
+                        <p>Add your first therapy session to start tracking reimbursements.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = reimbursements.map(reimbursement => {
+                const status = getReimbursementStatus(reimbursement);
+                const daysPending = getDaysPending(reimbursement);
+                
+                return `
+                    <div class="reimbursement-item">
+                        <div class="reimbursement-header">
+                            <div class="reimbursement-info">
+                                <div class="reimbursement-title">${reimbursement.provider}</div>
+                                <div class="reimbursement-details">
+                                    Session: ${formatDate(reimbursement.sessionDate)}
+                                    ${reimbursement.submittedDate ? `<br>Submitted: ${formatDate(reimbursement.submittedDate)}` : ''}
+                                    ${reimbursement.expectedDate ? `<br>Expected: ${formatDate(reimbursement.expectedDate)}` : ''}
+                                    ${reimbursement.receivedDate ? `<br>Received: ${formatDate(reimbursement.receivedDate)}` : ''}
+                                </div>
+                            </div>
+                            <div class="reimbursement-amount">$${reimbursement.amount.toFixed(2)}</div>
+                        </div>
+                        
+                        <div class="reimbursement-status">
+                            <span class="status-badge status-${status}">${status}</span>
+                            ${daysPending > 0 ? `<span style="font-size: 12px; color: var(--text-secondary);">${daysPending} days pending</span>` : ''}
+                        </div>
+                        
+                        ${reimbursement.notes ? `<div style="margin-top: 8px; font-size: 14px; color: var(--text-secondary);">${reimbursement.notes}</div>` : ''}
+                        
+                        <div class="reimbursement-actions">
+                            ${status !== 'received' ? `<button class="action-btn" onclick="markAsReceived('${reimbursement.id}')">Mark as Received</button>` : ''}
+                            <button class="action-btn" onclick="editReimbursement('${reimbursement.id}')">Edit</button>
+                            <button class="action-btn" onclick="deleteReimbursement('${reimbursement.id}')" style="color: #dc3545;">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getReimbursementStatus(reimbursement) {
+            if (reimbursement.receivedDate) {
+                return 'received';
+            }
+            if (reimbursement.expectedDate && new Date(reimbursement.expectedDate) < new Date()) {
+                return 'overdue';
+            }
+            if (reimbursement.submittedDate) {
+                return 'submitted';
+            }
+            return 'pending';
+        }
+
+        function getDaysPending(reimbursement) {
+            if (reimbursement.receivedDate) return 0;
+            
+            const baseDate = reimbursement.submittedDate || reimbursement.sessionDate;
+            const today = new Date();
+            const pendingSince = new Date(baseDate);
+            const diffTime = today - pendingSince;
+            return Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            return new Date(dateString).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+        }
+
+        function markAsReceived(id) {
+            const reimbursement = financialData.reimbursements.find(r => r.id == id);
+            if (reimbursement) {
+                reimbursement.receivedDate = new Date().toISOString().slice(0, 10);
+                reimbursement.status = 'received';
+                financialData.save();
+                renderReimbursementsList();
+                updateReimbursementsSummary();
+            }
+        }
+
+        function editReimbursement(id) {
+            const reimbursement = financialData.reimbursements.find(r => r.id == id);
+            if (!reimbursement) return;
+            
+            // Populate form fields
+            document.getElementById('editReimbursementId').value = reimbursement.id;
+            document.getElementById('editReimbursementProvider').value = reimbursement.provider;
+            document.getElementById('editReimbursementAmount').value = reimbursement.amount;
+            document.getElementById('editReimbursementSessionDate').value = reimbursement.sessionDate;
+            document.getElementById('editReimbursementSubmittedDate').value = reimbursement.submittedDate || '';
+            document.getElementById('editReimbursementExpectedDate').value = reimbursement.expectedDate || '';
+            document.getElementById('editReimbursementReceivedDate').value = reimbursement.receivedDate || '';
+            document.getElementById('editReimbursementNotes').value = reimbursement.notes || '';
+            
+            document.getElementById('editReimbursementModal').style.display = 'block';
+        }
+
+        function updateReimbursement(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const id = formData.get('editReimbursementId');
+            
+            const reimbursement = financialData.reimbursements.find(r => r.id == id);
+            if (reimbursement) {
+                reimbursement.provider = formData.get('provider');
+                reimbursement.amount = parseFloat(formData.get('amount'));
+                reimbursement.sessionDate = formData.get('sessionDate');
+                reimbursement.submittedDate = formData.get('submittedDate') || null;
+                reimbursement.expectedDate = formData.get('expectedDate') || null;
+                reimbursement.receivedDate = formData.get('receivedDate') || null;
+                reimbursement.notes = formData.get('notes') || '';
+                
+                // Update status based on dates
+                if (reimbursement.receivedDate) {
+                    reimbursement.status = 'received';
+                } else if (reimbursement.expectedDate && new Date(reimbursement.expectedDate) < new Date()) {
+                    reimbursement.status = 'overdue';
+                } else if (reimbursement.submittedDate) {
+                    reimbursement.status = 'submitted';
+                } else {
+                    reimbursement.status = 'pending';
+                }
+                
+                financialData.save();
+                renderReimbursementsList();
+                updateReimbursementsSummary();
+                closeModal('editReimbursementModal');
+            }
+        }
+
+        function deleteReimbursement(id) {
+            if (confirm('Are you sure you want to delete this reimbursement?')) {
+                financialData.reimbursements = financialData.reimbursements.filter(r => r.id != id);
+                financialData.save();
+                renderReimbursementsList();
+                updateReimbursementsSummary();
+            }
+        }
+
+        function updateReimbursementsSummary() {
+            // Outstanding amount
+            const outstanding = financialData.reimbursements
+                .filter(r => !r.receivedDate)
+                .reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('outstandingAmount').textContent = `$${outstanding.toFixed(2)}`;
+            
+            // Overdue claims
+            const overdue = financialData.reimbursements
+                .filter(r => getReimbursementStatus(r) === 'overdue').length;
+            document.getElementById('overdueClaims').textContent = overdue;
+            
+            // This month sessions
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const thisMonth = financialData.reimbursements
+                .filter(r => r.sessionDate.startsWith(currentMonth)).length;
+            document.getElementById('monthlySessionsCount').textContent = thisMonth;
+        }
+
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter buttons event listeners
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active from all buttons
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    // Add active to clicked button
+                    this.classList.add('active');
+                    // Re-render list
+                    renderReimbursementsList();
+                });
             });
         });
 
