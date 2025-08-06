@@ -2757,9 +2757,11 @@
                     <small>Leave blank if not yet submitted</small>
                 </div>
                 <div class="form-group">
-                    <label for="reimbursementExpectedDate">Expected Reimbursement Date</label>
-                    <input type="date" id="reimbursementExpectedDate" name="expectedDate">
-                    <small>Estimated date for receiving reimbursement</small>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="reimbursementPaid" name="isPaid" style="margin: 0;">
+                        <span>Mark as already received/paid</span>
+                    </label>
+                    <small>Check this if you've already received the reimbursement</small>
                 </div>
                 <div class="form-group">
                     <label for="reimbursementNotes">Notes (Optional)</label>
@@ -2799,10 +2801,13 @@
                     <input type="date" id="editReimbursementSubmittedDate" name="submittedDate">
                 </div>
                 <div class="form-group">
-                    <label for="editReimbursementExpectedDate">Expected Reimbursement Date</label>
-                    <input type="date" id="editReimbursementExpectedDate" name="expectedDate">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="editReimbursementPaid" name="isPaid" style="margin: 0;">
+                        <span>Mark as received/paid</span>
+                    </label>
+                    <small>Check this if you've received the reimbursement</small>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="receivedDateGroup" style="display: none;">
                     <label for="editReimbursementReceivedDate">Date Received</label>
                     <input type="date" id="editReimbursementReceivedDate" name="receivedDate">
                     <small>Date you actually received the reimbursement</small>
@@ -3615,8 +3620,12 @@
         }
 
         function closeModal(modalId) {
-            $(modalId).classList.remove('active');
-            $(modalId).querySelector('form')?.reset();
+            const modal = $(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+                modal.querySelector('form')?.reset();
+            }
         }
 
         // Income Management
@@ -4968,6 +4977,7 @@
         function saveReimbursement(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
+            const isPaid = formData.get('isPaid') === 'on';
             
             const reimbursement = {
                 id: Date.now(),
@@ -4975,10 +4985,9 @@
                 amount: parseFloat(formData.get('amount')),
                 sessionDate: formData.get('sessionDate'),
                 submittedDate: formData.get('submittedDate') || null,
-                expectedDate: formData.get('expectedDate') || null,
-                receivedDate: null,
+                receivedDate: isPaid ? new Date().toISOString().slice(0, 10) : null,
                 notes: formData.get('notes') || '',
-                status: formData.get('submittedDate') ? 'submitted' : 'pending'
+                status: isPaid ? 'received' : (formData.get('submittedDate') ? 'submitted' : 'pending')
             };
             
             financialData.reimbursements.push(reimbursement);
@@ -5030,7 +5039,6 @@
                                 <div class="reimbursement-details">
                                     Session: ${formatDate(reimbursement.sessionDate)}
                                     ${reimbursement.submittedDate ? `<br>Submitted: ${formatDate(reimbursement.submittedDate)}` : ''}
-                                    ${reimbursement.expectedDate ? `<br>Expected: ${formatDate(reimbursement.expectedDate)}` : ''}
                                     ${reimbursement.receivedDate ? `<br>Received: ${formatDate(reimbursement.receivedDate)}` : ''}
                                 </div>
                             </div>
@@ -5058,10 +5066,12 @@
             if (reimbursement.receivedDate) {
                 return 'received';
             }
-            if (reimbursement.expectedDate && new Date(reimbursement.expectedDate) < new Date()) {
-                return 'overdue';
-            }
+            // Check if submitted claim is older than 30 days (typical insurance processing time)
             if (reimbursement.submittedDate) {
+                const daysSinceSubmitted = Math.floor((new Date() - new Date(reimbursement.submittedDate)) / (1000 * 60 * 60 * 24));
+                if (daysSinceSubmitted > 30) {
+                    return 'overdue';
+                }
                 return 'submitted';
             }
             return 'pending';
@@ -5107,9 +5117,13 @@
             document.getElementById('editReimbursementAmount').value = reimbursement.amount;
             document.getElementById('editReimbursementSessionDate').value = reimbursement.sessionDate;
             document.getElementById('editReimbursementSubmittedDate').value = reimbursement.submittedDate || '';
-            document.getElementById('editReimbursementExpectedDate').value = reimbursement.expectedDate || '';
             document.getElementById('editReimbursementReceivedDate').value = reimbursement.receivedDate || '';
             document.getElementById('editReimbursementNotes').value = reimbursement.notes || '';
+            
+            // Handle paid checkbox
+            const isPaid = !!reimbursement.receivedDate;
+            document.getElementById('editReimbursementPaid').checked = isPaid;
+            document.getElementById('receivedDateGroup').style.display = isPaid ? 'block' : 'none';
             
             document.getElementById('editReimbursementModal').style.display = 'block';
         }
@@ -5118,6 +5132,7 @@
             event.preventDefault();
             const formData = new FormData(event.target);
             const id = formData.get('editReimbursementId');
+            const isPaid = formData.get('isPaid') === 'on';
             
             const reimbursement = financialData.reimbursements.find(r => r.id == id);
             if (reimbursement) {
@@ -5125,19 +5140,21 @@
                 reimbursement.amount = parseFloat(formData.get('amount'));
                 reimbursement.sessionDate = formData.get('sessionDate');
                 reimbursement.submittedDate = formData.get('submittedDate') || null;
-                reimbursement.expectedDate = formData.get('expectedDate') || null;
-                reimbursement.receivedDate = formData.get('receivedDate') || null;
                 reimbursement.notes = formData.get('notes') || '';
                 
-                // Update status based on dates
-                if (reimbursement.receivedDate) {
+                // Handle received date based on checkbox
+                if (isPaid) {
+                    reimbursement.receivedDate = formData.get('receivedDate') || new Date().toISOString().slice(0, 10);
                     reimbursement.status = 'received';
-                } else if (reimbursement.expectedDate && new Date(reimbursement.expectedDate) < new Date()) {
-                    reimbursement.status = 'overdue';
-                } else if (reimbursement.submittedDate) {
-                    reimbursement.status = 'submitted';
                 } else {
-                    reimbursement.status = 'pending';
+                    reimbursement.receivedDate = null;
+                    // Update status based on submission
+                    if (reimbursement.submittedDate) {
+                        const daysSinceSubmitted = Math.floor((new Date() - new Date(reimbursement.submittedDate)) / (1000 * 60 * 60 * 24));
+                        reimbursement.status = daysSinceSubmitted > 30 ? 'overdue' : 'submitted';
+                    } else {
+                        reimbursement.status = 'pending';
+                    }
                 }
                 
                 financialData.save();
@@ -5175,7 +5192,7 @@
             document.getElementById('monthlySessionsCount').textContent = thisMonth;
         }
 
-        // Filter functionality
+        // Filter functionality and checkbox handlers
         document.addEventListener('DOMContentLoaded', function() {
             // Filter buttons event listeners
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -5188,6 +5205,24 @@
                     renderReimbursementsList();
                 });
             });
+            
+            // Edit modal paid checkbox handler
+            const editPaidCheckbox = document.getElementById('editReimbursementPaid');
+            if (editPaidCheckbox) {
+                editPaidCheckbox.addEventListener('change', function() {
+                    const receivedDateGroup = document.getElementById('receivedDateGroup');
+                    if (this.checked) {
+                        receivedDateGroup.style.display = 'block';
+                        // Set default date to today if empty
+                        const receivedDateInput = document.getElementById('editReimbursementReceivedDate');
+                        if (!receivedDateInput.value) {
+                            receivedDateInput.value = new Date().toISOString().slice(0, 10);
+                        }
+                    } else {
+                        receivedDateGroup.style.display = 'none';
+                    }
+                });
+            }
         });
 
         // Auto-save reminder
