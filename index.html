@@ -1869,6 +1869,165 @@
                 flex-wrap: wrap;
             }
         }
+
+        /* Enhanced Modal Styles for Better Readability */
+        .modal-content {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .modal-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .modal-close {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Checkbox styling */
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .form-group label[style*="flex"] {
+            font-weight: 500;
+            font-size: 16px;
+            text-transform: none;
+            letter-spacing: normal;
+            margin-bottom: 0;
+        }
+
+        /* Button styling */
+        .flex {
+            display: flex;
+        }
+
+        .gap-2 {
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a7bd5;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--text-secondary);
+            color: var(--background-color);
+        }
+
+        /* Responsive modal improvements */
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px; /* Prevents zoom on mobile */
+            }
+
+            .flex.gap-2 {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3627,6 +3786,14 @@
                 modal.querySelector('form')?.reset();
             }
         }
+        
+        function showModal(modalId) {
+            const modal = $(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+            }
+        }
 
         // Income Management
         function openAddIncomeModal() {
@@ -4969,7 +5136,7 @@
 
         // Reimbursement Functions
         function showAddReimbursementModal() {
-            document.getElementById('addReimbursementModal').style.display = 'block';
+            showModal('addReimbursementModal');
             // Set default date to today
             document.getElementById('reimbursementSessionDate').value = new Date().toISOString().slice(0, 10);
         }
@@ -5125,7 +5292,7 @@
             document.getElementById('editReimbursementPaid').checked = isPaid;
             document.getElementById('receivedDateGroup').style.display = isPaid ? 'block' : 'none';
             
-            document.getElementById('editReimbursementModal').style.display = 'block';
+            showModal('editReimbursementModal');
         }
 
         function updateReimbursement(event) {
