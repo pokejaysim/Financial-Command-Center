@@ -3297,7 +3297,9 @@
                     }, 0);
             }
 
-            getMonthlyExpenses() {
+            getMonthlyExpenses(targetMonth = null) {
+                const currentMonth = targetMonth || this.currentMonth;
+                
                 const budgetBuddy = this.budgetBuddy
                     .filter(item => item.isActive)
                     .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
@@ -3306,17 +3308,26 @@
                     .filter(item => item.isActive)
                     .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
                 
+                // Filter subscriptions by end date - don't include expired subscriptions
                 const subs = this.subscriptions
-                    .filter(item => item.isActive)
+                    .filter(item => {
+                        if (!item.isActive) return false;
+                        // If subscription has an end date, check if current month is before end date
+                        if (item.endDate) {
+                            const endMonth = item.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
+                            return currentMonth <= endMonth;
+                        }
+                        return true; // No end date means ongoing subscription
+                    })
                     .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
                 
-                const variables = this.monthlyVariables[this.currentMonth] || { otherExpenses: 0 };
+                const variables = this.monthlyVariables[currentMonth] || { otherExpenses: 0 };
                 
                 return budgetBuddy + fixed + subs + variables.otherExpenses;
             }
 
             getAvailableForSavings(targetMonth = null) {
-                return this.getMonthlyIncome(targetMonth) - this.getMonthlyExpenses();
+                return this.getMonthlyIncome(targetMonth) - this.getMonthlyExpenses(targetMonth);
             }
         }
 
@@ -3779,6 +3790,7 @@
                 updateMonthDisplay();
                 updateDashboard();
                 renderIncomeList(); // Re-render income list for new month
+                renderSubscriptionsList(); // Re-render subscriptions for new month
             });
             
             $('nextMonth').addEventListener('click', () => {
@@ -3788,6 +3800,7 @@
                 updateMonthDisplay();
                 updateDashboard();
                 renderIncomeList(); // Re-render income list for new month
+                renderSubscriptionsList(); // Re-render subscriptions for new month
             });
         }
 
@@ -3801,7 +3814,7 @@
         // Dashboard Updates
         function updateDashboard() {
             const income = financialData.getMonthlyIncome(financialData.currentMonth);
-            const expenses = financialData.getMonthlyExpenses();
+            const expenses = financialData.getMonthlyExpenses(financialData.currentMonth);
             const available = financialData.getAvailableForSavings(financialData.currentMonth);
             
             // Update main metrics
@@ -4272,7 +4285,17 @@
         }
 
         function updateNeoDashboard() {
-            const activeSubscriptions = financialData.subscriptions.filter(s => s.isActive);
+            // Filter subscriptions that are active AND not expired in current month
+            const activeSubscriptions = financialData.subscriptions.filter(s => {
+                if (!s.isActive) return false;
+                // Check if subscription has expired
+                if (s.endDate) {
+                    const endMonth = s.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
+                    return financialData.currentMonth <= endMonth;
+                }
+                return true; // No end date means ongoing subscription
+            });
+            
             const totalMonthly = activeSubscriptions.reduce((sum, sub) => 
                 sum + financialData.calculateMonthlyAmount(sub), 0);
             
@@ -4287,10 +4310,16 @@
             const tableBody = $('neoTableBody');
             const emptyState = $('neoEmptyState');
             
-            // Filter active subscriptions
-            let filteredItems = financialData.subscriptions.filter(sub => 
-                sub.isActive && sub.name.toLowerCase().includes(searchTerm)
-            );
+            // Filter active subscriptions that haven't expired
+            let filteredItems = financialData.subscriptions.filter(sub => {
+                if (!sub.isActive || !sub.name.toLowerCase().includes(searchTerm)) return false;
+                // Check if subscription has expired
+                if (sub.endDate) {
+                    const endMonth = sub.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
+                    return financialData.currentMonth <= endMonth;
+                }
+                return true; // No end date means ongoing subscription
+            });
             
             // Sort items
             filteredItems.sort((a, b) => {
@@ -4729,7 +4758,7 @@
                 const monthKey = `${currentYear}-${String(month + 1).padStart(2, '0')}`;
                 
                 ytdIncome += financialData.getMonthlyIncome(monthKey);
-                ytdExpenses += financialData.getMonthlyExpenses();
+                ytdExpenses += financialData.getMonthlyExpenses(monthKey);
                 ytdMonths++;
             }
             
@@ -4875,7 +4904,7 @@
                 const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                 
                 const income = financialData.getMonthlyIncome(monthKey);
-                const expenses = financialData.getMonthlyExpenses();
+                const expenses = financialData.getMonthlyExpenses(monthKey);
                 const savings = Math.max(0, income - expenses);
                 
                 analyticsData.push({
