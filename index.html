@@ -3724,6 +3724,7 @@
                 financialData.currentMonth = date.toISOString().slice(0, 7);
                 updateMonthDisplay();
                 updateDashboard();
+                renderIncomeList(); // Re-render income list for new month
             });
             
             $('nextMonth').addEventListener('click', () => {
@@ -3732,6 +3733,7 @@
                 financialData.currentMonth = date.toISOString().slice(0, 7);
                 updateMonthDisplay();
                 updateDashboard();
+                renderIncomeList(); // Re-render income list for new month
             });
         }
 
@@ -3881,18 +3883,34 @@
         function renderIncomeList() {
             const container = $('incomeList');
             
-            if (financialData.income.length === 0) {
+            // Filter income based on current month - one-time payments only show in their target month
+            const filteredIncome = financialData.income.filter(item => {
+                if (item.frequency === 'one-time') {
+                    return item.targetMonth === financialData.currentMonth;
+                }
+                return true; // Show all recurring income sources
+            });
+            
+            if (filteredIncome.length === 0) {
+                const hasOneTimePayments = financialData.income.some(item => item.frequency === 'one-time');
+                const emptyMessage = hasOneTimePayments 
+                    ? "No income sources for this month" 
+                    : "No income sources added yet";
+                const buttonText = hasOneTimePayments 
+                    ? "Add Income Source" 
+                    : "Add Your First Income Source";
+                    
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">💵</div>
-                        <div class="empty-state-text">No income sources added yet</div>
-                        <button class="btn btn-primary" onclick="openAddIncomeModal()">Add Your First Income Source</button>
+                        <div class="empty-state-text">${emptyMessage}</div>
+                        <button class="btn btn-primary" onclick="openAddIncomeModal()">${buttonText}</button>
                     </div>
                 `;
                 return;
             }
             
-            const incomeHtml = financialData.income.map(item => {
+            const incomeHtml = filteredIncome.map(item => {
                 let detailsHtml;
                 if (item.frequency === 'one-time') {
                     const paymentDate = new Date(item.startDate);
