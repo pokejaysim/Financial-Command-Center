@@ -578,6 +578,11 @@
             text-transform: uppercase;
         }
 
+        .frequency-badge.current-month {
+            background-color: #22c55e;
+            color: white;
+        }
+
         /* Amount Display */
         .amount {
             font-weight: 600;
@@ -2745,11 +2750,12 @@
                 </div>
                 <div class="form-group">
                     <label>Frequency</label>
-                    <select name="frequency" required>
+                    <select name="frequency" required onchange="handleIncomeFrequencyChange(this)">
                         <option value="weekly">Weekly</option>
                         <option value="biweekly">Bi-weekly</option>
                         <option value="monthly" selected>Monthly</option>
                         <option value="annual">Annual</option>
+                        <option value="one-time">One-time (Current Month Only)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -3209,15 +3215,32 @@
                         return amount;
                     case 'annual':
                         return amount / 12;
+                    case 'one-time':
+                        // One-time payments are handled separately in getMonthlyIncome
+                        return 0;
                     default:
                         return amount;
                 }
             }
 
-            getMonthlyIncome() {
+            getMonthlyIncome(targetMonth = null) {
+                const currentMonth = targetMonth || this.currentMonth;
                 return this.income
-                    .filter(item => item.isActive)
-                    .reduce((total, item) => total + this.calculateMonthlyAmount(item), 0);
+                    .filter(item => {
+                        if (!item.isActive) return false;
+                        // For one-time payments, only include if it matches the target month
+                        if (item.frequency === 'one-time') {
+                            return item.targetMonth === currentMonth;
+                        }
+                        return true;
+                    })
+                    .reduce((total, item) => {
+                        // One-time payments return their full amount for the target month, 0 otherwise
+                        if (item.frequency === 'one-time') {
+                            return total + parseFloat(item.amount);
+                        }
+                        return total + this.calculateMonthlyAmount(item);
+                    }, 0);
             }
 
             getMonthlyExpenses() {
@@ -3238,8 +3261,8 @@
                 return budgetBuddy + fixed + subs + variables.otherExpenses;
             }
 
-            getAvailableForSavings() {
-                return this.getMonthlyIncome() - this.getMonthlyExpenses();
+            getAvailableForSavings(targetMonth = null) {
+                return this.getMonthlyIncome(targetMonth) - this.getMonthlyExpenses();
             }
         }
 
@@ -3721,9 +3744,9 @@
 
         // Dashboard Updates
         function updateDashboard() {
-            const income = financialData.getMonthlyIncome();
+            const income = financialData.getMonthlyIncome(financialData.currentMonth);
             const expenses = financialData.getMonthlyExpenses();
-            const available = financialData.getAvailableForSavings();
+            const available = financialData.getAvailableForSavings(financialData.currentMonth);
             
             // Update main metrics
             $('monthlyIncome').textContent = formatCurrency(income);
@@ -3796,10 +3819,26 @@
         }
 
         // Income Management
+        function handleIncomeFrequencyChange(selectElement) {
+            const startDateInput = selectElement.closest('form').querySelector('input[name="startDate"]');
+            const startDateGroup = startDateInput.closest('.form-group');
+            const label = startDateGroup.querySelector('label');
+            
+            if (selectElement.value === 'one-time') {
+                label.textContent = 'Payment Date';
+                startDateInput.value = new Date().toISOString().slice(0, 10); // Default to today
+            } else {
+                label.textContent = 'Start Date';
+            }
+        }
+
         function openAddIncomeModal() {
             $('addIncomeForm').reset();
             $('addIncomeForm').dataset.editId = '';
             $('addIncomeModal').querySelector('.modal-title').textContent = 'Add Income Source';
+            // Reset the start date label in case it was changed
+            const startDateLabel = $('addIncomeModal').querySelector('input[name="startDate"]').closest('.form-group').querySelector('label');
+            startDateLabel.textContent = 'Start Date';
             openModal('addIncomeModal');
         }
 
@@ -3817,6 +3856,12 @@
                 startDate: formData.get('startDate'),
                 isActive: true
             };
+            
+            // For one-time payments, store the target month based on the payment date
+            if (income.frequency === 'one-time') {
+                const paymentDate = new Date(income.startDate);
+                income.targetMonth = paymentDate.toISOString().slice(0, 7); // YYYY-MM format
+            }
             
             if (form.dataset.editId) {
                 const index = financialData.income.findIndex(i => i.id === form.dataset.editId);
@@ -3847,23 +3892,39 @@
                 return;
             }
             
-            const incomeHtml = financialData.income.map(item => `
-                <div class="list-item">
-                    <div class="list-item-info">
-                        <div class="list-item-title">${item.name}</div>
-                        <div class="list-item-details">
-                            <span class="amount positive">${formatCurrency(item.amount)}</span>
-                            <span class="frequency-badge">${item.frequency}</span>
-                            <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+            const incomeHtml = financialData.income.map(item => {
+                let detailsHtml;
+                if (item.frequency === 'one-time') {
+                    const paymentDate = new Date(item.startDate);
+                    const monthYear = paymentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    const isCurrentMonth = item.targetMonth === financialData.currentMonth;
+                    detailsHtml = `
+                        <span class="amount positive">${formatCurrency(item.amount)}</span>
+                        <span class="frequency-badge ${isCurrentMonth ? 'current-month' : ''}">${item.frequency}</span>
+                        <span class="text-secondary">${monthYear}${isCurrentMonth ? ' (This Month)' : ''}</span>
+                    `;
+                } else {
+                    detailsHtml = `
+                        <span class="amount positive">${formatCurrency(item.amount)}</span>
+                        <span class="frequency-badge">${item.frequency}</span>
+                        <span class="text-secondary">≈ ${formatCurrency(financialData.calculateMonthlyAmount(item))}/month</span>
+                    `;
+                }
+                
+                return `
+                    <div class="list-item">
+                        <div class="list-item-info">
+                            <div class="list-item-title">${item.name}</div>
+                            <div class="list-item-details">${detailsHtml}</div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="icon-btn" onclick="editIncome('${item.id}')">✏️</button>
+                            <button class="icon-btn" onclick="toggleItem('income', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
+                            <button class="icon-btn" onclick="deleteItem('income', '${item.id}')">🗑️</button>
                         </div>
                     </div>
-                    <div class="action-buttons">
-                        <button class="icon-btn" onclick="editIncome('${item.id}')">✏️</button>
-                        <button class="icon-btn" onclick="toggleItem('income', '${item.id}')">${item.isActive ? '✓' : '⏸'}</button>
-                        <button class="icon-btn" onclick="deleteItem('income', '${item.id}')">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             container.innerHTML = incomeHtml;
         }
@@ -3878,6 +3939,14 @@
             form.amount.value = income.amount;
             form.frequency.value = income.frequency;
             form.startDate.value = income.startDate;
+            
+            // Update the label for one-time payments
+            const startDateLabel = form.querySelector('input[name="startDate"]').closest('.form-group').querySelector('label');
+            if (income.frequency === 'one-time') {
+                startDateLabel.textContent = 'Payment Date';
+            } else {
+                startDateLabel.textContent = 'Start Date';
+            }
             
             $('addIncomeModal').querySelector('.modal-title').textContent = 'Edit Income Source';
             openModal('addIncomeModal');
@@ -4586,14 +4655,10 @@
             const currentYear = new Date().getFullYear();
             for (let month = 0; month <= currentDate.getMonth(); month++) {
                 const monthKey = `${currentYear}-${String(month + 1).padStart(2, '0')}`;
-                const oldMonth = financialData.currentMonth;
-                financialData.currentMonth = monthKey;
                 
-                ytdIncome += financialData.getMonthlyIncome();
+                ytdIncome += financialData.getMonthlyIncome(monthKey);
                 ytdExpenses += financialData.getMonthlyExpenses();
                 ytdMonths++;
-                
-                financialData.currentMonth = oldMonth;
             }
             
             const ytdSavings = ytdIncome - ytdExpenses;
