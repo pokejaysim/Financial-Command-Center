@@ -666,6 +666,12 @@
             margin-bottom: 1.5rem;
         }
 
+        .section-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
         .section-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -2164,10 +2170,16 @@
                         <h2 class="section-title">Budget Buddy</h2>
                         <p class="section-subtitle">Discretionary spending budget</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddBudgetBuddyModal()">
-                        <span>+</span>
-                        <span>Add Budget Item</span>
-                    </button>
+                    <div class="section-buttons">
+                        <button class="btn btn-secondary" onclick="exportBudgetBuddy()">
+                            <span>📊</span>
+                            <span>Export</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddBudgetBuddyModal()">
+                            <span>+</span>
+                            <span>Add Budget Item</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -2186,10 +2198,16 @@
                         <h2 class="section-title">Income Sources</h2>
                         <p class="section-subtitle">Manage your recurring income</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddIncomeModal()">
-                        <span>+</span>
-                        <span>Add Income</span>
-                    </button>
+                    <div class="section-buttons">
+                        <button class="btn btn-secondary" onclick="exportIncome()">
+                            <span>📊</span>
+                            <span>Export</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddIncomeModal()">
+                            <span>+</span>
+                            <span>Add Income</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -2208,10 +2226,16 @@
                         <h2 class="section-title">Coast Capital Account</h2>
                         <p class="section-subtitle">Expenses from your Coast Capital account</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddExpenseModal()">
-                        <span>+</span>
-                        <span>Add Expense</span>
-                    </button>
+                    <div class="section-buttons">
+                        <button class="btn btn-secondary" onclick="exportExpenses()">
+                            <span>📊</span>
+                            <span>Export</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddExpenseModal()">
+                            <span>+</span>
+                            <span>Add Expense</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Coast Capital Total -->
@@ -2260,6 +2284,10 @@
                         <h2 class="section-title">Neo Credit Card</h2>
                         <p class="section-subtitle">Expenses from your Neo credit card</p>
                     </div>
+                    <button class="btn btn-secondary" onclick="exportSubscriptions()">
+                        <span>📊</span>
+                        <span>Export</span>
+                    </button>
                 </div>
 
                 <!-- Neo Dashboard -->
@@ -2343,6 +2371,10 @@
                         <h2 class="section-title">Notes & Reminders</h2>
                         <p class="section-subtitle">Keep track of important financial information</p>
                     </div>
+                    <button class="btn btn-secondary" onclick="exportNotes()">
+                        <span>📊</span>
+                        <span>Export</span>
+                    </button>
                 </div>
 
                 <!-- Add Note Form -->
@@ -2379,6 +2411,10 @@
                         <h2 class="section-title">Financial Analytics</h2>
                         <p class="section-subtitle">Track your financial trends and patterns</p>
                     </div>
+                    <button class="btn btn-secondary" onclick="exportAnalytics()">
+                        <span>📊</span>
+                        <span>Export</span>
+                    </button>
                 </div>
 
                 <!-- Savings Trend Chart -->
@@ -2504,10 +2540,16 @@
                             <h3 class="section-title">Assets</h3>
                             <p class="section-subtitle">Properties, investments, and valuable possessions</p>
                         </div>
-                        <button class="btn btn-primary" onclick="openAddAssetModal()">
-                            <span class="icon">+</span>
-                            Add Asset
-                        </button>
+                        <div class="section-buttons">
+                            <button class="btn btn-secondary" onclick="exportAssets()">
+                                <span>📊</span>
+                                <span>Export</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="openAddAssetModal()">
+                                <span class="icon">+</span>
+                                Add Asset
+                            </button>
+                        </div>
                     </div>
 
                     <div id="assetsList"></div>
@@ -2520,10 +2562,16 @@
                             <h3 class="section-title">Liabilities</h3>
                             <p class="section-subtitle">Loans, mortgages, and other debts</p>
                         </div>
-                        <button class="btn btn-primary" onclick="openAddLiabilityModal()">
-                            <span class="icon">+</span>
-                            Add Liability
-                        </button>
+                        <div class="section-buttons">
+                            <button class="btn btn-secondary" onclick="exportLiabilities()">
+                                <span>📊</span>
+                                <span>Export</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="openAddLiabilityModal()">
+                                <span class="icon">+</span>
+                                Add Liability
+                            </button>
+                        </div>
                     </div>
 
                     <div id="liabilitiesList"></div>
@@ -2537,10 +2585,16 @@
                         <h2 class="section-title">Reimbursements</h2>
                         <p class="section-subtitle">Track therapy session reimbursements from insurance</p>
                     </div>
-                    <button class="btn btn-primary" onclick="showAddReimbursementModal()">
-                        <span class="icon">+</span>
-                        Add Session
-                    </button>
+                    <div class="section-buttons">
+                        <button class="btn btn-secondary" onclick="exportReimbursements()">
+                            <span>📊</span>
+                            <span>Export</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddReimbursementModal()">
+                            <span class="icon">+</span>
+                            Add Session
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Summary Cards -->
@@ -4713,6 +4767,169 @@
             link.click();
             
             URL.revokeObjectURL(url);
+        }
+
+        // Section Export Functions
+        function exportToCSV(data, filename, headers) {
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => 
+                    headers.map(header => {
+                        const value = row[header] || '';
+                        // Escape commas and quotes in CSV
+                        return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+                            ? `"${value.replace(/"/g, '""')}"` 
+                            : value;
+                    }).join(',')
+                )
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${filename}-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportBudgetBuddy() {
+            const data = financialData.budgetBuddy.map(item => ({
+                'Name': item.name,
+                'Amount': item.amount,
+                'Frequency': item.frequency,
+                'Monthly Amount': financialData.calculateMonthlyAmount(item).toFixed(2),
+                'Start Date': item.startDate,
+                'Active': item.isActive ? 'Yes' : 'No'
+            }));
+            
+            exportToCSV(data, 'budget-buddy', ['Name', 'Amount', 'Frequency', 'Monthly Amount', 'Start Date', 'Active']);
+        }
+
+        function exportIncome() {
+            const data = financialData.income.map(item => ({
+                'Name': item.name,
+                'Amount': item.amount,
+                'Frequency': item.frequency,
+                'Monthly Amount': item.frequency === 'one-time' ? 
+                    (item.targetMonth === financialData.currentMonth ? item.amount.toFixed(2) : '0.00') :
+                    financialData.calculateMonthlyAmount(item).toFixed(2),
+                'Start Date': item.startDate,
+                'Target Month': item.targetMonth || 'N/A',
+                'Active': item.isActive ? 'Yes' : 'No'
+            }));
+            
+            exportToCSV(data, 'income-sources', ['Name', 'Amount', 'Frequency', 'Monthly Amount', 'Start Date', 'Target Month', 'Active']);
+        }
+
+        function exportExpenses() {
+            const data = financialData.expenses.map(item => ({
+                'Name': item.name,
+                'Amount': item.amount,
+                'Frequency': item.frequency,
+                'Monthly Amount': financialData.calculateMonthlyAmount(item).toFixed(2),
+                'Start Date': item.startDate,
+                'Payment Day': item.paymentDay || 'N/A',
+                'Active': item.isActive ? 'Yes' : 'No'
+            }));
+            
+            exportToCSV(data, 'coast-capital-expenses', ['Name', 'Amount', 'Frequency', 'Monthly Amount', 'Start Date', 'Payment Day', 'Active']);
+        }
+
+        function exportSubscriptions() {
+            const data = financialData.subscriptions.map(item => ({
+                'Name': item.name,
+                'Amount': item.amount,
+                'Frequency': item.frequency,
+                'Monthly Amount': financialData.calculateMonthlyAmount(item).toFixed(2),
+                'Category': item.neoCategory || 'N/A',
+                'Start Date': item.startDate || 'N/A',
+                'End Date': item.endDate || 'N/A',
+                'Active': item.isActive ? 'Yes' : 'No'
+            }));
+            
+            exportToCSV(data, 'neo-credit-card-subscriptions', ['Name', 'Amount', 'Frequency', 'Monthly Amount', 'Category', 'Start Date', 'End Date', 'Active']);
+        }
+
+        function exportNotes() {
+            const data = financialData.notes.map(note => ({
+                'Title': note.title,
+                'Content': note.content,
+                'Category': note.category,
+                'Priority': note.priority,
+                'Date Created': new Date(note.createdAt).toLocaleDateString(),
+                'Date Modified': new Date(note.modifiedAt).toLocaleDateString()
+            }));
+            
+            exportToCSV(data, 'notes-and-reminders', ['Title', 'Content', 'Category', 'Priority', 'Date Created', 'Date Modified']);
+        }
+
+        function exportAnalytics() {
+            // Generate analytics data for the last 6 months
+            const analyticsData = [];
+            const currentDate = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+                const monthKey = date.toISOString().slice(0, 7);
+                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                
+                const income = financialData.getMonthlyIncome(monthKey);
+                const expenses = financialData.getMonthlyExpenses();
+                const savings = Math.max(0, income - expenses);
+                
+                analyticsData.push({
+                    'Month': monthName,
+                    'Income': income.toFixed(2),
+                    'Expenses': expenses.toFixed(2),
+                    'Savings': savings.toFixed(2),
+                    'Savings Rate': income > 0 ? ((savings / income) * 100).toFixed(1) + '%' : '0%'
+                });
+            }
+            
+            exportToCSV(analyticsData, 'financial-analytics', ['Month', 'Income', 'Expenses', 'Savings', 'Savings Rate']);
+        }
+
+        function exportAssets() {
+            const data = financialData.assets.map(asset => ({
+                'Name': asset.name,
+                'Type': asset.type,
+                'Value': asset.value,
+                'Date Added': new Date(asset.dateAdded).toLocaleDateString(),
+                'Description': asset.description || 'N/A'
+            }));
+            
+            exportToCSV(data, 'assets', ['Name', 'Type', 'Value', 'Date Added', 'Description']);
+        }
+
+        function exportLiabilities() {
+            const data = financialData.liabilities.map(liability => ({
+                'Name': liability.name,
+                'Type': liability.type,
+                'Amount': liability.amount,
+                'Interest Rate': liability.interestRate ? liability.interestRate + '%' : 'N/A',
+                'Due Date': liability.dueDate || 'N/A',
+                'Date Added': new Date(liability.dateAdded).toLocaleDateString(),
+                'Description': liability.description || 'N/A'
+            }));
+            
+            exportToCSV(data, 'liabilities', ['Name', 'Type', 'Amount', 'Interest Rate', 'Due Date', 'Date Added', 'Description']);
+        }
+
+        function exportReimbursements() {
+            const data = financialData.reimbursements.map(reimbursement => ({
+                'Session Date': reimbursement.sessionDate,
+                'Therapist': reimbursement.therapistName,
+                'Session Cost': reimbursement.sessionCost,
+                'Claim Submitted': reimbursement.claimSubmitted ? 'Yes' : 'No',
+                'Claim Date': reimbursement.claimDate || 'N/A',
+                'Reimbursed': reimbursement.reimbursed ? 'Yes' : 'No',
+                'Reimbursement Date': reimbursement.reimbursementDate || 'N/A',
+                'Reimbursement Amount': reimbursement.reimbursementAmount || 'N/A',
+                'Status': getReimbursementStatus(reimbursement)
+            }));
+            
+            exportToCSV(data, 'therapy-reimbursements', ['Session Date', 'Therapist', 'Session Cost', 'Claim Submitted', 'Claim Date', 'Reimbursed', 'Reimbursement Date', 'Reimbursement Amount', 'Status']);
         }
 
         function importData(event) {
