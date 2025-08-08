@@ -1597,7 +1597,7 @@
             color: #374151;
         }
 
-        /* Neo Forecast Section Styles */
+        /* What-If Scenario Calculator Styles */
         .neo-forecast-section {
             margin-top: 2rem;
             border: 1px solid var(--border-color);
@@ -1646,165 +1646,281 @@
             display: block;
         }
 
-        .forecast-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .forecast-scenario {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            background-color: var(--background);
-        }
-
-        .forecast-scenario h4 {
-            margin: 0 0 1rem 0;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        /* What-If Totals Section */
+        .whatif-totals {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        .forecast-scenario.add {
-            border-color: #10b981;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
-        }
-
-        .forecast-scenario.remove {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%);
-        }
-
-        .forecast-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .forecast-input-group {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 0.5rem;
-            align-items: end;
-        }
-
-        .forecast-input {
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.875rem;
-        }
-
-        .forecast-select {
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.875rem;
-            background-color: var(--background);
-        }
-
-        .forecast-btn {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .forecast-btn.add {
-            background-color: #10b981;
-            color: white;
-        }
-
-        .forecast-btn.add:hover {
-            background-color: #059669;
-        }
-
-        .forecast-btn.remove {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        .forecast-btn.remove:hover {
-            background-color: #dc2626;
-        }
-
-        .forecast-results {
-            margin-top: 2rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-        }
-
-        .forecast-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .forecast-metric {
+        .whatif-current,
+        .whatif-projected {
             text-align: center;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: var(--background-secondary);
         }
 
-        .forecast-metric-label {
+        .whatif-total-label {
             font-size: 0.875rem;
             color: var(--text-secondary);
             margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
-        .forecast-metric-value {
+        .whatif-total-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: var(--text-primary);
+        }
+
+        .whatif-arrow {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .whatif-difference {
+            text-align: center;
+        }
+
+        .whatif-diff-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .whatif-diff-value {
             font-size: 1.25rem;
             font-weight: 700;
             font-family: monospace;
         }
 
-        .forecast-metric-value.positive {
+        .whatif-diff-value.positive {
             color: #10b981;
         }
 
-        .forecast-metric-value.negative {
+        .whatif-diff-value.negative {
             color: #ef4444;
         }
 
-        .forecast-projection {
-            overflow-x: auto;
+        .whatif-diff-value.neutral {
+            color: var(--text-secondary);
         }
 
-        .forecast-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        .forecast-table th,
-        .forecast-table td {
-            padding: 0.75rem;
-            text-align: center;
+        /* What-If Sections */
+        .whatif-section {
+            margin-bottom: 2rem;
             border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
         }
 
-        .forecast-table th {
+        .whatif-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .whatif-section h4 {
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .whatif-reset-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            background-color: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .whatif-reset-btn:hover {
+            background-color: #4b5563;
+        }
+
+        /* Subscription Items */
+        .whatif-subscription-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--background);
+            transition: all 0.2s;
+        }
+
+        .whatif-subscription-item.disabled {
+            opacity: 0.5;
             background-color: var(--background-secondary);
+        }
+
+        .whatif-subscription-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .whatif-subscription-toggle {
+            width: 40px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .whatif-subscription-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .whatif-toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+
+        .whatif-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .whatif-toggle-slider {
+            background-color: #8b5cf6;
+        }
+
+        input:checked + .whatif-toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .whatif-subscription-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .whatif-subscription-cost {
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Add Form */
+        .whatif-add-form {
+            margin-bottom: 1rem;
+        }
+
+        .whatif-input-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .whatif-input,
+        .whatif-select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background-color: var(--background);
+        }
+
+        .whatif-add-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .whatif-add-btn:hover {
+            background-color: #059669;
+        }
+
+        /* Hypothetical Items */
+        .whatif-hypothetical-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+
+        .whatif-hypothetical-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .whatif-hypothetical-label {
+            font-size: 0.75rem;
+            background-color: #10b981;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
             font-weight: 600;
         }
 
-        .forecast-table td.positive {
-            color: #10b981;
-            font-weight: 600;
+        .whatif-remove-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .forecast-table td.negative {
-            color: #ef4444;
-            font-weight: 600;
+        .whatif-remove-btn:hover {
+            background-color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .whatif-totals {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .whatif-arrow {
+                transform: rotate(90deg);
+            }
+
+            .whatif-input-group {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
         }
 
         /* PDF Export Styles */
@@ -2573,77 +2689,61 @@
                     </div>
                 </div>
 
-                <!-- Neo Forecast Section -->
+                <!-- What-If Scenario Calculator -->
                 <div class="neo-forecast-section">
-                    <div class="neo-forecast-header" onclick="toggleForecastSection()">
+                    <div class="neo-forecast-header" onclick="toggleWhatIfSection()">
                         <div class="neo-forecast-title">
-                            <span>🔮</span>
-                            <span>Forecast & What-If Scenarios</span>
+                            <span>🧮</span>
+                            <span>What-If Scenario Calculator</span>
                         </div>
-                        <div class="neo-forecast-toggle" id="forecastToggle">▼</div>
+                        <div class="neo-forecast-toggle" id="whatIfToggle">▼</div>
                     </div>
-                    <div class="neo-forecast-content" id="forecastContent">
-                        <div class="forecast-controls">
-                            <!-- Add Subscription Scenario -->
-                            <div class="forecast-scenario add">
-                                <h4><span>➕</span>Add New Subscription</h4>
-                                <div class="forecast-form">
-                                    <div class="forecast-input-group">
-                                        <input type="text" class="forecast-input" id="addForecastName" placeholder="Subscription name">
-                                        <input type="number" class="forecast-input" id="addForecastAmount" placeholder="Amount" step="0.01" min="0">
-                                        <select class="forecast-select" id="addForecastFreq">
-                                            <option value="monthly">Monthly</option>
-                                            <option value="annual">Annual</option>
-                                        </select>
-                                    </div>
-                                    <button class="forecast-btn add" onclick="calculateAddForecast()">Preview Impact</button>
-                                </div>
+                    <div class="neo-forecast-content" id="whatIfContent">
+                        
+                        <!-- Current & Projected Totals -->
+                        <div class="whatif-totals">
+                            <div class="whatif-current">
+                                <div class="whatif-total-label">Current Monthly Total</div>
+                                <div class="whatif-total-value" id="whatIfCurrentTotal">$0.00</div>
                             </div>
-
-                            <!-- Remove Subscription Scenario -->
-                            <div class="forecast-scenario remove">
-                                <h4><span>➖</span>Remove Subscription</h4>
-                                <div class="forecast-form">
-                                    <select class="forecast-select" id="removeForecastSelect" style="margin-bottom: 1rem;">
-                                        <option value="">Select subscription to remove</option>
-                                    </select>
-                                    <button class="forecast-btn remove" onclick="calculateRemoveForecast()">Preview Impact</button>
-                                </div>
+                            <div class="whatif-arrow">→</div>
+                            <div class="whatif-projected">
+                                <div class="whatif-total-label">With Changes</div>
+                                <div class="whatif-total-value" id="whatIfProjectedTotal">$0.00</div>
+                            </div>
+                            <div class="whatif-difference">
+                                <div class="whatif-diff-label">Difference</div>
+                                <div class="whatif-diff-value" id="whatIfDifference">$0.00</div>
                             </div>
                         </div>
 
-                        <!-- Forecast Results -->
-                        <div class="forecast-results" id="forecastResults" style="display: none;">
-                            <div class="forecast-summary">
-                                <div class="forecast-metric">
-                                    <div class="forecast-metric-label">Current Monthly</div>
-                                    <div class="forecast-metric-value" id="forecastCurrentMonthly">$0.00</div>
-                                </div>
-                                <div class="forecast-metric">
-                                    <div class="forecast-metric-label">Projected Monthly</div>
-                                    <div class="forecast-metric-value" id="forecastProjectedMonthly">$0.00</div>
-                                </div>
-                                <div class="forecast-metric">
-                                    <div class="forecast-metric-label">Monthly Change</div>
-                                    <div class="forecast-metric-value" id="forecastMonthlyChange">$0.00</div>
-                                </div>
-                                <div class="forecast-metric">
-                                    <div class="forecast-metric-label">Annual Impact</div>
-                                    <div class="forecast-metric-value" id="forecastAnnualImpact">$0.00</div>
+                        <!-- Current Subscriptions List -->
+                        <div class="whatif-section">
+                            <div class="whatif-section-header">
+                                <h4>📋 Current Subscriptions</h4>
+                                <button class="whatif-reset-btn" onclick="resetWhatIfScenarios()">Reset All</button>
+                            </div>
+                            <div class="whatif-subscriptions-list" id="whatIfSubscriptionsList">
+                                <!-- Generated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Add Hypothetical Subscriptions -->
+                        <div class="whatif-section">
+                            <h4>➕ Test New Subscriptions</h4>
+                            <div class="whatif-add-form">
+                                <div class="whatif-input-group">
+                                    <input type="text" class="whatif-input" id="whatIfNewName" placeholder="Subscription name">
+                                    <input type="number" class="whatif-input" id="whatIfNewAmount" placeholder="Amount" step="0.01" min="0">
+                                    <select class="whatif-select" id="whatIfNewFreq">
+                                        <option value="monthly">Monthly</option>
+                                        <option value="annual">Annual</option>
+                                    </select>
+                                    <button class="whatif-add-btn" onclick="addHypotheticalSubscription()">Add</button>
                                 </div>
                             </div>
-                            
-                            <div class="forecast-projection">
-                                <h4 style="margin-bottom: 1rem;">6-Month Projection</h4>
-                                <table class="forecast-table">
-                                    <thead>
-                                        <tr id="forecastTableHeader">
-                                            <th>Scenario</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="forecastTableBody">
-                                    </tbody>
-                                </table>
+                            <div class="whatif-hypothetical-list" id="whatIfHypotheticalList">
+                                <!-- Generated by JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -3598,10 +3698,10 @@
                 const subs = this.subscriptions
                     .filter(item => {
                         if (!item.isActive) return false;
-                        // If subscription has an end date, check if current month is before end date
+                        // If subscription has an end date, check if current month is not after end date
                         if (item.endDate) {
                             const endMonth = item.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
-                            return currentMonth <= endMonth;
+                            return endMonth >= currentMonth; // Subscription is active if end month >= current month
                         }
                         return true; // No end date means ongoing subscription
                     })
@@ -4577,7 +4677,7 @@
                 // Check if subscription has expired
                 if (s.endDate) {
                     const endMonth = s.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
-                    return financialData.currentMonth <= endMonth;
+                    return endMonth >= financialData.currentMonth; // Subscription is active if end month >= current month
                 }
                 return true; // No end date means ongoing subscription
             });
@@ -4602,7 +4702,7 @@
                 // Check if subscription has expired
                 if (sub.endDate) {
                     const endMonth = sub.endDate.slice(0, 7); // Get YYYY-MM from YYYY-MM-DD
-                    return financialData.currentMonth <= endMonth;
+                    return endMonth >= financialData.currentMonth; // Subscription is active if end month >= current month
                 }
                 return true; // No end date means ongoing subscription
             });
@@ -4884,10 +4984,15 @@
             return groups;
         }
 
-        // Neo Forecast Functions
-        function toggleForecastSection() {
-            const content = $('forecastContent');
-            const toggle = $('forecastToggle');
+        // What-If Scenario Calculator Functions
+        let whatIfState = {
+            excludedSubscriptions: new Set(),
+            hypotheticalSubscriptions: []
+        };
+
+        function toggleWhatIfSection() {
+            const content = $('whatIfContent');
+            const toggle = $('whatIfToggle');
             
             if (content.classList.contains('expanded')) {
                 content.classList.remove('expanded');
@@ -4895,186 +5000,187 @@
             } else {
                 content.classList.add('expanded');
                 toggle.classList.add('expanded');
-                updateForecastDropdown();
+                loadWhatIfScenario();
             }
         }
 
-        function updateForecastDropdown() {
-            const select = $('removeForecastSelect');
+        function loadWhatIfScenario() {
+            renderWhatIfSubscriptions();
+            updateWhatIfCalculations();
+        }
+
+        function renderWhatIfSubscriptions() {
+            const container = $('whatIfSubscriptionsList');
+            
+            // Get active subscriptions for current month
             const activeSubscriptions = financialData.subscriptions.filter(s => {
                 if (!s.isActive) return false;
                 if (s.endDate) {
                     const endMonth = s.endDate.slice(0, 7);
-                    return financialData.currentMonth <= endMonth;
+                    return endMonth >= financialData.currentMonth;
                 }
                 return true;
             });
 
-            select.innerHTML = '<option value="">Select subscription to remove</option>';
-            activeSubscriptions.forEach(sub => {
+            if (activeSubscriptions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 1rem;">No active subscriptions for this month</div>';
+                return;
+            }
+
+            const subscriptionsHtml = activeSubscriptions.map(sub => {
                 const monthlyAmount = financialData.calculateMonthlyAmount(sub);
-                select.innerHTML += `<option value="${sub.id}">${sub.name} (${formatCurrency(monthlyAmount)}/month)</option>`;
-            });
+                const isExcluded = whatIfState.excludedSubscriptions.has(sub.id);
+                
+                return `
+                    <div class="whatif-subscription-item ${isExcluded ? 'disabled' : ''}">
+                        <div class="whatif-subscription-info">
+                            <label class="whatif-subscription-toggle">
+                                <input type="checkbox" ${!isExcluded ? 'checked' : ''} onchange="toggleSubscriptionInScenario('${sub.id}')">
+                                <span class="whatif-toggle-slider"></span>
+                            </label>
+                            <div class="whatif-subscription-name">${sub.name}</div>
+                        </div>
+                        <div class="whatif-subscription-cost">${formatCurrency(monthlyAmount)}/month</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = subscriptionsHtml;
         }
 
-        function calculateAddForecast() {
-            const name = $('addForecastName').value.trim();
-            const amount = parseFloat($('addForecastAmount').value);
-            const frequency = $('addForecastFreq').value;
+        function toggleSubscriptionInScenario(subscriptionId) {
+            if (whatIfState.excludedSubscriptions.has(subscriptionId)) {
+                whatIfState.excludedSubscriptions.delete(subscriptionId);
+            } else {
+                whatIfState.excludedSubscriptions.add(subscriptionId);
+            }
+            
+            renderWhatIfSubscriptions();
+            updateWhatIfCalculations();
+        }
+
+        function addHypotheticalSubscription() {
+            const name = $('whatIfNewName').value.trim();
+            const amount = parseFloat($('whatIfNewAmount').value);
+            const frequency = $('whatIfNewFreq').value;
 
             if (!name || !amount || amount <= 0) {
                 alert('Please enter a valid subscription name and amount');
                 return;
             }
 
-            // Create temporary subscription object
-            const tempSub = {
+            const hypotheticalSub = {
+                id: 'hyp_' + Date.now(),
                 name,
                 amount,
                 frequency,
-                startDate: new Date().toISOString().slice(0, 10),
-                isActive: true
+                isHypothetical: true
             };
 
-            const monthlyImpact = financialData.calculateMonthlyAmount(tempSub);
-            showForecastResults('add', tempSub, monthlyImpact);
+            whatIfState.hypotheticalSubscriptions.push(hypotheticalSub);
+            
+            // Clear form
+            $('whatIfNewName').value = '';
+            $('whatIfNewAmount').value = '';
+            $('whatIfNewFreq').value = 'monthly';
+            
+            renderHypotheticalSubscriptions();
+            updateWhatIfCalculations();
         }
 
-        function calculateRemoveForecast() {
-            const subscriptionId = $('removeForecastSelect').value;
-            if (!subscriptionId) {
-                alert('Please select a subscription to remove');
+        function renderHypotheticalSubscriptions() {
+            const container = $('whatIfHypotheticalList');
+            
+            if (whatIfState.hypotheticalSubscriptions.length === 0) {
+                container.innerHTML = '';
                 return;
             }
 
-            const subscription = financialData.subscriptions.find(s => s.id === subscriptionId);
-            if (!subscription) return;
+            const hypotheticalHtml = whatIfState.hypotheticalSubscriptions.map(sub => {
+                const monthlyAmount = financialData.calculateMonthlyAmount(sub);
+                
+                return `
+                    <div class="whatif-hypothetical-item">
+                        <div class="whatif-hypothetical-info">
+                            <div class="whatif-hypothetical-label">TEST</div>
+                            <div class="whatif-subscription-name">${sub.name}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="whatif-subscription-cost">${formatCurrency(monthlyAmount)}/month</div>
+                            <button class="whatif-remove-btn" onclick="removeHypotheticalSubscription('${sub.id}')">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
-            const monthlyImpact = -financialData.calculateMonthlyAmount(subscription);
-            showForecastResults('remove', subscription, monthlyImpact);
+            container.innerHTML = hypotheticalHtml;
         }
 
-        function showForecastResults(scenario, subscription, monthlyChange) {
-            // Calculate current metrics
-            const currentActiveSubscriptions = financialData.subscriptions.filter(s => {
+        function removeHypotheticalSubscription(id) {
+            whatIfState.hypotheticalSubscriptions = whatIfState.hypotheticalSubscriptions.filter(sub => sub.id !== id);
+            renderHypotheticalSubscriptions();
+            updateWhatIfCalculations();
+        }
+
+        function updateWhatIfCalculations() {
+            // Calculate current monthly total
+            const activeSubscriptions = financialData.subscriptions.filter(s => {
                 if (!s.isActive) return false;
                 if (s.endDate) {
                     const endMonth = s.endDate.slice(0, 7);
-                    return financialData.currentMonth <= endMonth;
+                    return endMonth >= financialData.currentMonth;
                 }
                 return true;
             });
 
-            const currentMonthly = currentActiveSubscriptions.reduce((sum, sub) => 
+            const currentTotal = activeSubscriptions.reduce((sum, sub) => 
+                sum + financialData.calculateMonthlyAmount(sub), 0);
+
+            // Calculate projected total with changes
+            const includedSubscriptions = activeSubscriptions.filter(sub => 
+                !whatIfState.excludedSubscriptions.has(sub.id));
+            
+            const includedTotal = includedSubscriptions.reduce((sum, sub) => 
                 sum + financialData.calculateMonthlyAmount(sub), 0);
             
-            const projectedMonthly = currentMonthly + monthlyChange;
-            const annualImpact = monthlyChange * 12;
+            const hypotheticalTotal = whatIfState.hypotheticalSubscriptions.reduce((sum, sub) => 
+                sum + financialData.calculateMonthlyAmount(sub), 0);
+            
+            const projectedTotal = includedTotal + hypotheticalTotal;
+            const difference = projectedTotal - currentTotal;
 
-            // Update summary metrics
-            $('forecastCurrentMonthly').textContent = formatCurrency(currentMonthly);
-            $('forecastProjectedMonthly').textContent = formatCurrency(projectedMonthly);
-            $('forecastMonthlyChange').textContent = formatCurrency(monthlyChange);
-            $('forecastMonthlyChange').className = `forecast-metric-value ${monthlyChange >= 0 ? 'negative' : 'positive'}`;
-            $('forecastAnnualImpact').textContent = formatCurrency(annualImpact);
-            $('forecastAnnualImpact').className = `forecast-metric-value ${annualImpact >= 0 ? 'negative' : 'positive'}`;
-
-            // Generate 6-month projection
-            generateForecastProjection(scenario, subscription, currentMonthly, monthlyChange);
-
-            // Show results
-            $('forecastResults').style.display = 'block';
+            // Update UI
+            $('whatIfCurrentTotal').textContent = formatCurrency(currentTotal);
+            $('whatIfProjectedTotal').textContent = formatCurrency(projectedTotal);
+            $('whatIfDifference').textContent = formatCurrency(Math.abs(difference));
+            
+            const diffElement = $('whatIfDifference');
+            const diffLabel = diffElement.previousElementSibling;
+            
+            if (difference > 0) {
+                diffElement.className = 'whatif-diff-value negative';
+                diffLabel.textContent = 'Additional Cost';
+            } else if (difference < 0) {
+                diffElement.className = 'whatif-diff-value positive';
+                diffLabel.textContent = 'Monthly Savings';
+            } else {
+                diffElement.className = 'whatif-diff-value neutral';
+                diffLabel.textContent = 'No Change';
+            }
         }
 
-        function generateForecastProjection(scenario, subscription, baseMonthly, monthlyChange) {
-            const months = [];
-            const currentDate = new Date(financialData.currentMonth + '-01');
+        function resetWhatIfScenarios() {
+            whatIfState.excludedSubscriptions.clear();
+            whatIfState.hypotheticalSubscriptions = [];
             
-            // Generate next 6 months
-            for (let i = 0; i < 6; i++) {
-                const date = new Date(currentDate);
-                date.setMonth(date.getMonth() + i);
-                months.push({
-                    date: date,
-                    monthKey: date.toISOString().slice(0, 7),
-                    monthName: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
-                });
-            }
-
-            // Build table header
-            const headerRow = $('forecastTableHeader');
-            headerRow.innerHTML = '<th>Scenario</th>';
-            months.forEach(month => {
-                headerRow.innerHTML += `<th>${month.monthName}</th>`;
-            });
-
-            // Build table body
-            const tbody = $('forecastTableBody');
-            tbody.innerHTML = '';
-
-            // Current scenario row
-            let currentRow = '<tr><td>Current</td>';
-            months.forEach(month => {
-                // Calculate what current monthly would be for this month (considering end dates)
-                let monthlyTotal = 0;
-                financialData.subscriptions.forEach(sub => {
-                    if (!sub.isActive) return;
-                    if (sub.endDate) {
-                        const endMonth = sub.endDate.slice(0, 7);
-                        if (month.monthKey <= endMonth) {
-                            monthlyTotal += financialData.calculateMonthlyAmount(sub);
-                        }
-                    } else {
-                        monthlyTotal += financialData.calculateMonthlyAmount(sub);
-                    }
-                });
-                currentRow += `<td>${formatCurrency(monthlyTotal)}</td>`;
-            });
-            currentRow += '</tr>';
-            tbody.innerHTML += currentRow;
-
-            // Projected scenario row
-            const scenarioName = scenario === 'add' ? `Add ${subscription.name}` : `Remove ${subscription.name}`;
-            let projectedRow = `<tr><td>${scenarioName}</td>`;
-            months.forEach(month => {
-                let monthlyTotal = 0;
-                
-                // Calculate base subscription totals for this month
-                financialData.subscriptions.forEach(sub => {
-                    if (!sub.isActive) return;
-                    if (scenario === 'remove' && sub.id === subscription.id) return; // Exclude removed subscription
-                    
-                    if (sub.endDate) {
-                        const endMonth = sub.endDate.slice(0, 7);
-                        if (month.monthKey <= endMonth) {
-                            monthlyTotal += financialData.calculateMonthlyAmount(sub);
-                        }
-                    } else {
-                        monthlyTotal += financialData.calculateMonthlyAmount(sub);
-                    }
-                });
-
-                // Add new subscription if scenario is 'add'
-                if (scenario === 'add') {
-                    monthlyTotal += financialData.calculateMonthlyAmount(subscription);
-                }
-
-                const changeClass = scenario === 'add' ? 'negative' : 'positive';
-                projectedRow += `<td class="${changeClass}">${formatCurrency(monthlyTotal)}</td>`;
-            });
-            projectedRow += '</tr>';
-            tbody.innerHTML += projectedRow;
-
-            // Difference row
-            let differenceRow = '<tr style="border-top: 2px solid var(--border-color);"><td><strong>Difference</strong></td>';
-            months.forEach(month => {
-                // For simplicity, show the monthly change consistently
-                // (in a real scenario, this could vary based on end dates)
-                const changeClass = monthlyChange >= 0 ? 'negative' : 'positive';
-                differenceRow += `<td class="${changeClass}"><strong>${formatCurrency(monthlyChange)}</strong></td>`;
-            });
-            differenceRow += '</tr>';
-            tbody.innerHTML += differenceRow;
+            // Clear form
+            $('whatIfNewName').value = '';
+            $('whatIfNewAmount').value = '';
+            $('whatIfNewFreq').value = 'monthly';
+            
+            renderWhatIfSubscriptions();
+            renderHypotheticalSubscriptions();
+            updateWhatIfCalculations();
         }
 
         // Notes Management
