@@ -3320,7 +3320,10 @@
                 </div>
                 <div class="form-group">
                     <label>End Date (Optional)</label>
-                    <input type="date" name="endDate" placeholder="Leave blank for ongoing" min="">
+                    <div class="flex gap-2">
+                        <input type="date" name="endDate" placeholder="Leave blank for ongoing" min="" style="flex: 1;">
+                        <button type="button" class="btn btn-secondary" onclick="clearEndDate()" title="Clear date for ongoing payment">Clear</button>
+                    </div>
                     <small class="text-secondary">Payment will be automatically removed after this date. Leave blank for ongoing payments.</small>
                 </div>
                 <div class="flex gap-2">
@@ -4851,6 +4854,18 @@
             
             $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Edit Neo Credit Card Expense';
             openModal('addSubscriptionModal');
+        }
+
+        function clearEndDate() {
+            const endDateInput = $('addSubscriptionForm').endDate;
+            endDateInput.value = '';
+            // Temporarily remove min attribute to allow clearing
+            endDateInput.removeAttribute('min');
+            // Re-add min attribute after a short delay
+            setTimeout(() => {
+                const today = new Date().toISOString().slice(0, 10);
+                endDateInput.min = today;
+            }, 100);
         }
 
         // Neo Credit Card JSON Import Functions
