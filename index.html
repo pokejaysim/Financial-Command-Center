@@ -4293,7 +4293,16 @@
             if (modal) {
                 modal.style.display = 'none';
                 modal.classList.remove('active');
-                modal.querySelector('form')?.reset();
+                const form = modal.querySelector('form');
+                if (form) {
+                    form.reset();
+                    // Clear any edit ID to prevent form state issues
+                    delete form.dataset.editId;
+                }
+                // Reset modal title for subscription modal
+                if (modalId === 'addSubscriptionModal') {
+                    modal.querySelector('.modal-title').textContent = 'Add Neo Credit Card Expense';
+                }
             }
         }
         
@@ -4654,13 +4663,14 @@
 
         // Subscription Management
         function openAddSubscriptionModal() {
-            $('addSubscriptionForm').reset();
-            $('addSubscriptionForm').dataset.editId = '';
+            const form = $('addSubscriptionForm');
+            form.reset();
+            delete form.dataset.editId;
             $('addSubscriptionModal').querySelector('.modal-title').textContent = 'Add Neo Credit Card Expense';
             
             // Set minimum date to today
             const today = new Date().toISOString().slice(0, 10);
-            $('addSubscriptionForm').endDate.min = today;
+            form.endDate.min = today;
             
             openModal('addSubscriptionModal');
         }
